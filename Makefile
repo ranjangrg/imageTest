@@ -4,7 +4,7 @@ COMPILER=g++
 CFLAGS=--std=c++14
 
 SOURCES=./src/main.cpp
-SOURCES+=./src/bmp.cpp
+SOURCES+=./src/image.cpp
 SOURCES+=./src/stb.cpp
 
 OBJECTS=$(SOURCES:.cpp=.o)

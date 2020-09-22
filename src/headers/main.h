@@ -2,6 +2,6 @@
 #define __MAIN_H
 
 #include "./basic.h"
-#include "./bmp.h"
+#include "./image.h"
 
 #endif
