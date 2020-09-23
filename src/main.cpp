@@ -23,10 +23,28 @@ int imageTest() {
 }
 
 int matrixTest() {
-	Matrix<int> m = Matrix<int>(10, 10); 
-	m.edit(3,4, 100);
+	Matrix<int> mA = Matrix<int>(3, 3); 
+	mA.edit(0,0, 5);
+	mA.edit(0,2, 7);
+	mA.edit(2,1, 3);
 
-	m.info();
+	Matrix<int> mB = Matrix<int>(3, 3); 
+	mB.edit(0,9, 2);
+	mB.edit(0,2, -2);
+	mB.edit(2,1, 2);
+
+	//std::cout << "Elem: " << mB(0,2) << std::endl;
+
+	Matrix<int> mSum = mA + mB;
+	Matrix<int> mDiff = mA - mB;
+
+	mA.info(); 
+	std::cout << " + " << std::endl;
+	mB.info(); 
+	std::cout << " = " << std::endl;
+	mSum.info();
+	std::cout << " (-) = " << std::endl;
+	mDiff.info();
 
 	return 0;
 }
