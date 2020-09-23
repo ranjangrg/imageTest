@@ -19,6 +19,7 @@ namespace Image {
 	Image getImageData(const char* fileName);
 	int writeImageToFile(const char* fileToWrite, Image imageObj);
 	void printPixels(Image imageObj, const char colour);
+	void modifyPixels(Image &imageObj, const char colour);
 	void clearImageData(Image imageObj);
 }
 
