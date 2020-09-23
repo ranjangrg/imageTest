@@ -3,5 +3,6 @@
 
 #include "./basic.h"
 #include "./image.h"
+#include "./matrix.hpp"
 
 #endif

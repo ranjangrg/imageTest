@@ -5,7 +5,6 @@
 #include "./stb.h"
 
 #include <cinttypes>	// for 32 bit integers
-#include <iomanip>
 
 //#pragma pack(2)	// to disable auto-padding of bytes in structs
 

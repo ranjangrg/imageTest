@@ -22,8 +22,17 @@ int imageTest() {
 	return 0;
 }
 
+int matrixTest() {
+	Matrix<int> m = Matrix<int>(10, 10); 
+	m.edit(3,4, 100);
+
+	m.info();
+
+	return 0;
+}
+
 int main() {
-	imageTest();
+	matrixTest();
 	
 	return 0;
 }
