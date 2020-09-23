@@ -1,2 +1,5 @@
 # ignore main exec file
 main
+
+# temporary image for testing
+data/delme.png
