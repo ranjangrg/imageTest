@@ -33,18 +33,35 @@ int matrixTest() {
 	mB.edit(0,2, -2);
 	mB.edit(2,1, 2);
 
+	Matrix<int> mC = Matrix<int>(5, 5); 
+
 	//std::cout << "Elem: " << mB(0,2) << std::endl;
 
-	Matrix<int> mSum = mA + mB;
-	Matrix<int> mDiff = mA - mB;
+	Matrix<int> mSumPass1 = mA + mB;
+	Matrix<int> mSumPass2 = mB + mA;
+	Matrix<int> mSumFail1 = mA + mC;
+	Matrix<int> mSumFail2 = mB + mC;
 
+	Matrix<int> mDiffPass1 = mA - mB;
+	Matrix<int> mDiffPass2 = mB - mA;
+	Matrix<int> mDiffFail1 = mA - mC;
+	Matrix<int> mDiffFail2 = mB - mC;
+	Matrix<int> mDiffFail3 = mC - mA;
+	Matrix<int> mDiffFail4 = mC - mB;
+
+	std::cout << "mA:" << std::endl;
 	mA.info(); 
-	std::cout << " + " << std::endl;
-	mB.info(); 
+	std::cout << "mB:" << std::endl;
+	mB.info();
+	std::cout << "mC:" << std::endl;
+	mC.info();
+
+	/*
 	std::cout << " = " << std::endl;
 	mSum.info();
 	std::cout << " (-) = " << std::endl;
 	mDiff.info();
+	*/
 
 	return 0;
 }
