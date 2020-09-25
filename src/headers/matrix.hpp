@@ -15,9 +15,13 @@ private:
 	std::vector<std::vector<T>> data;
 public:
 	Matrix(int nRows, int nCols, const T& _default = 0);
+	Matrix(std::initializer_list<std::initializer_list<T>> rowCol);
+	Matrix(std::initializer_list<T> rowOnly);
 	//~Matrix();
 
 	// CRUD
+	bool addRow(std::vector<T> row);
+	bool addRow(std::initializer_list<T> row);
 	void edit(unsigned row, unsigned col, const T& value);
 	void info(int cellWidth = 3);
 
@@ -41,6 +45,7 @@ public:
 */
 template <typename T>
 Matrix<T>::Matrix(int nRows, int nCols, const T& _default) {
+	this->data.clear();
 	this->nRows = nRows;
 	this->nCols = nCols;
 	for (int rowIdx = 0; rowIdx < nRows; ++rowIdx) {
@@ -53,29 +58,101 @@ Matrix<T>::Matrix(int nRows, int nCols, const T& _default) {
 }
 
 template <typename T>
+Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> rowCol) {
+	bool validData = (rowCol.size() > 0) ? true : false;
+	if (validData) {
+		bool isFirstRow = true;
+		unsigned int currColSize = this->nCols;
+		unsigned int prevColSize = currColSize;
+		try {
+			this->data.clear();
+			std::vector<std::vector<T>> data;
+			for (auto row : rowCol) {
+				currColSize = row.size();
+				if (isFirstRow) {
+					prevColSize = currColSize;
+					isFirstRow = false;
+				}
+				// try to catch data with irregular column lengths
+				if (currColSize != prevColSize) { throw -1; }
+				
+				data.push_back(row);
+				prevColSize = currColSize;
+			}
+			this->data = data;
+			this->nRows = data.size();
+			this->nCols = data.at(0).size();
+		} catch (int e) {
+			this->data.clear();
+			this->nRows = 0;
+			this->nCols = 0;
+			std::cerr << "[ERR] Bad data (as argument) for Matrix constructor." << std::endl;
+		}
+	}
+}
+
+template <typename T>
+Matrix<T>::Matrix(std::initializer_list<T> rowOnly) {
+	bool validData = (rowOnly.size() > 0) ? true : false;
+	if (validData) {
+		this->data.clear();
+		this->data.push_back(rowOnly);
+		this->nRows = 1;
+		this->nCols = rowOnly.size();
+	} else {
+		std::cerr << "[ERR] Invalid row data: Empty row." << std::endl;
+	}
+}
+
+template <typename T>
+bool Matrix<T>::addRow(std::vector<T> row) {
+	bool isAddSuccessful = true;
+	try {
+		// only if column count matches
+		if ( row.size() != this->nCols ) { throw -1; }
+		this->data.push_back(row);
+		this->nRows++;
+	} catch (...) {
+		isAddSuccessful = false;
+		std::cerr << "[ERR] Matrix: Adding row failed! Columns count doesn't match." << std::endl;
+	}
+	return isAddSuccessful;
+}
+
+template <typename T>
+bool Matrix<T>::addRow(std::initializer_list<T> row) {
+	std::vector<T> rowVector = row;
+	bool isAddSuccessful = this->addRow(rowVector);	
+	return isAddSuccessful;
+}
+
+template <typename T>
 void Matrix<T>::edit(unsigned row, unsigned col, const T& value) {
 	try {
 		// check if row and col out of index range
 		if ( (row >= this->nRows) || (col >= this->nCols) ) {
-			std::string msg =  "[ERR] Edit failed: (row: " + std::to_string(row) + ", col: " + std::to_string(col) + ") = " + std::to_string(value);
+			std::string msg =  "[ERR] Matrix edit failed! (row: " + std::to_string(row) + ", col: " + std::to_string(col) + ") = " + std::to_string(value);
 			throw msg;
 		}
 		this->data.at(row).at(col) = value;
 	} catch (std::string msg) {
-		std::cout << msg << std::endl;
+		std::cerr << msg << std::endl;
 	}
 }
 
 template <typename T>
 void Matrix<T>::info(int cellWidth) {
-	std::cout << std::string( (cellWidth + 1) * this->nCols, '-') << '-' << std::endl;
-	for (int rowIdx = 0; rowIdx < this->nRows; ++rowIdx) {
-		for (int colIdx = 0; colIdx < this->nCols; ++colIdx) {
-			std::cout << std::setw(cellWidth) << this->data.at(rowIdx).at(colIdx) << " ";
+	bool matrixIsNotEmpty = (this->nCols > 0) && (this->nRows > 0);
+	if (matrixIsNotEmpty) {
+		std::cout << std::string( (cellWidth + 1) * this->nCols, '-') << '-' << std::endl;
+		for (int rowIdx = 0; rowIdx < this->nRows; ++rowIdx) {
+			for (int colIdx = 0; colIdx < this->nCols; ++colIdx) {
+				std::cout << std::setw(cellWidth) << this->data.at(rowIdx).at(colIdx) << " ";
+			}
+			std::cout << std::endl;
 		}
-		std::cout << std::endl;
+		std::cout << std::string( (cellWidth + 1) * this->nCols, '-') << '-' << std::endl;
 	}
-	std::cout << std::string( (cellWidth + 1) * this->nCols, '-') << '-' << std::endl;
 }
 
 template <typename T>
