@@ -1,4 +1,4 @@
-#include "./headers/image.h"
+#include "./headers/image/image.h"
 
 namespace Image {
 	Image getImageData(const char* fileName) {

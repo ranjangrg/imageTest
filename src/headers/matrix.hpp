@@ -15,8 +15,8 @@ private:
 	std::vector<std::vector<T>> data;
 public:
 	Matrix(int nRows, int nCols, const T& _default = 0);
-	Matrix(std::initializer_list<std::initializer_list<T>> rowCol);
-	Matrix(std::initializer_list<T> rowOnly);
+	Matrix(std::initializer_list<std::initializer_list<T>> rowCol);	// e.g. Matrix<int> ({{1,2}, {3,4}})
+	Matrix(std::initializer_list<T> rowOnly); 
 	//~Matrix();
 
 	// CRUD
