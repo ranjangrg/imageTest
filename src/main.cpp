@@ -1,7 +1,7 @@
 #include "./headers/main.h"
 
 int imageTest() {
-	Image::Image testImage;
+	Image::ImageStruct testImage;
 
 	testImage = Image::getImageData("./data/pixel.png");
 	Image::printPixels(testImage, 'r');
@@ -76,8 +76,41 @@ int matrixTest() {
 	return 0;
 }
 
+int pixelTest() {
+	Image::Pixel dot;
+	dot.r = 20; 
+	dot.g = 41;
+	dot.b = 0;
+	dot.a = 0;
+	Image::pixelInfo(dot);
+
+	return 0;
+}
+
+int imageAsPixelsTest() {
+	Image::ImageStruct testImage;
+	testImage = Image::getImageData("./data/pixel.png");
+
+	Image::ImageAsPixels imgPx1;
+	Image::ImageAsPixels imgPx2(testImage);
+
+	imgPx2.info();
+	std::cout << "RED:" <<  std::endl;
+	imgPx2.info('r');
+	std::cout << "GREEN:" <<  std::endl;
+	imgPx2.info('g');
+	std::cout << "BLUE:" <<  std::endl;
+	imgPx2.info('b');
+
+	imgPx1.info('r');
+
+	return 0;
+}
+
 int main() {
-	matrixTest();
+	//imageTest();
+	//pixelTest();
+	imageAsPixelsTest();
 	
 	return 0;
 }

@@ -1,7 +1,7 @@
 #include "./headers/image/image.h"
 
 namespace Image {
-	Image getImageData(const char* fileName) {
+	ImageStruct getImageData(const char* fileName) {
 		int width, height, channels;
 		unsigned char *imgData = stbi_load(fileName, &width, &height, &channels, 0);
 		if (imgData == NULL) {
@@ -11,7 +11,7 @@ namespace Image {
 		}
 
 		// Creating Image object to return
-		Image imageObj;	
+		ImageStruct imageObj;	
 		imageObj.width = width;
 		imageObj.height = height;
 		imageObj.channels = channels;
@@ -20,12 +20,12 @@ namespace Image {
 		return imageObj;
 	}
 
-	int writeImageToFile(const char* fileToWrite, Image imageObj) {
+	int writeImageToFile(const char* fileToWrite, ImageStruct imageObj) {
 		// Writing to image file ;;; "./data/tmp2.png"
 		return stbi_write_png(fileToWrite, imageObj.width, imageObj.height, imageObj.channels, imageObj.imgData, imageObj.width * imageObj.channels);
 	}
 
-	void printPixels(Image imageObj, const char colour) {
+	void printPixels(const ImageStruct& imageObj, const char colour) {
 		/* 
 		colour: 'r' for RED, 'g' for GREEN and 'b' for BLUE.
 		*/
@@ -48,7 +48,7 @@ namespace Image {
 		std::cout << std::endl;
 	}
 
-	void modifyPixels(Image &imageObj, const char colour) {
+	void modifyPixels(ImageStruct &imageObj, const char colour) {
 		std::cout << "Modification in progress ..." << std::endl;
 		int rgbIdx = 0;	// for red
 		if (colour == 'g') { rgbIdx = 1; } 
@@ -67,7 +67,57 @@ namespace Image {
 		}
 	}
 
-	void clearImageData(Image imageObj) {
+	void clearImageData(ImageStruct imageObj) {
 		stbi_image_free(imageObj.imgData);
 	}
+
+	// 	=============================
+	// 	 ImageAsPixels class methods
+	//	=============================
+
+	ImageAsPixels::ImageAsPixels(void) {
+		this->width = 0;
+		this->height = 0;
+		this->channels = 0;
+		this->pixels.clear();
+	}
+
+	ImageAsPixels::ImageAsPixels(const ImageStruct& imageObj) {
+		std::vector<Pixel> row;
+		unsigned bytePerPixel = imageObj.channels;
+		for (int pixelY = 0; pixelY < imageObj.width; ++pixelY) {
+			row.clear();			
+			for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
+				unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
+				Pixel px;
+				px.r = pixelOffset[0];
+				px.g = pixelOffset[1];
+				px.b = pixelOffset[2];
+				//px.a = pixelOffset[3];
+				//pixelInfo(px);
+				row.push_back(px);
+			}
+			this->pixels.push_back(row);
+		}
+	}
+
+	void ImageAsPixels::info() {
+		for (auto row : this->pixels) {
+			for (auto px : row) {
+				pixelInfo(px);
+			}
+		}
+	}
+
+	void ImageAsPixels::info(const char& rgb, const int& cellWidth) {
+		for (auto row : this->pixels) {
+			for (auto px : row) {
+				if (rgb == 'r')	{ std::cout << std::setw(cellWidth) << (int)(px.r) << '.'; }
+				else if (rgb == 'g') { std::cout << std::setw(cellWidth) << (int)(px.g) << '.'; }
+				else if (rgb == 'b') { std::cout << std::setw(cellWidth) << (int)(px.b) << '.'; }
+			}
+			std::cout << std::endl;
+		}
+	}
+
 }

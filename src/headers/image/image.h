@@ -1,8 +1,11 @@
-#ifndef __BMP_H
-#define __BMP_H
+#pragma once	// include only once
+
+#ifndef __IMAGE_H
+#define __IMAGE_H
 
 #include "../basic.h"
 #include "./stb.h"
+#include "./pixel.h"
 
 #include <cinttypes>	// for 32 bit integers
 
@@ -13,13 +16,28 @@ namespace Image {
 		int width, height, channels;
 		unsigned char *imgData;
 		//char header[2] {'B', 'M'};	// C++11 allows assignment like this
-	} Image;
+	} ImageStruct;
 
-	Image getImageData(const char* fileName);
-	int writeImageToFile(const char* fileToWrite, Image imageObj);
-	void printPixels(Image imageObj, const char colour);
-	void modifyPixels(Image &imageObj, const char colour);
-	void clearImageData(Image imageObj);
+	ImageStruct getImageData(const char* fileName);
+	int writeImageToFile(const char* fileToWrite, ImageStruct imageObj);
+	void printPixels(const ImageStruct& imageObj, const char colour);
+	void modifyPixels(ImageStruct &imageObj, const char colour);
+	void clearImageData(ImageStruct imageObj);
+
+	// 	=============================
+	// 	 ImageAsPixels class methods
+	//	=============================
+	class ImageAsPixels {
+	private:
+		int width, height, channels;
+		std::vector<std::vector<Pixel>> pixels;
+	public:
+		ImageAsPixels(void);
+		ImageAsPixels(const ImageStruct& imageObj);
+
+		void info();
+		void info(const char& rgb, const int& cellWidth = 3);
+	};
 }
 
 #endif
