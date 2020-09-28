@@ -85,16 +85,14 @@ namespace Image {
 	ImageAsPixels::ImageAsPixels(const ImageStruct& imageObj) {
 		std::vector<Pixel> row;
 		unsigned bytePerPixel = imageObj.channels;
+		this->width = imageObj.width;
+		this->height = imageObj.height;
+		this->channels = imageObj.channels;
 		for (int pixelY = 0; pixelY < imageObj.width; ++pixelY) {
 			row.clear();			
 			for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
 				unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
-				Pixel px;
-				px.r = pixelOffset[0];
-				px.g = pixelOffset[1];
-				px.b = pixelOffset[2];
-				//px.a = pixelOffset[3];
-				//pixelInfo(px);
+				Pixel px(pixelOffset, imageObj.channels);
 				row.push_back(px);
 			}
 			this->pixels.push_back(row);
@@ -104,17 +102,16 @@ namespace Image {
 	void ImageAsPixels::info() {
 		for (auto row : this->pixels) {
 			for (auto px : row) {
-				pixelInfo(px);
+				px.info();
 			}
 		}
 	}
 
-	void ImageAsPixels::info(const char& rgb, const int& cellWidth) {
+	void ImageAsPixels::info(const int& targetChannel, const int& cellWidth) {
+		// cellWidth ONLY for string format
 		for (auto row : this->pixels) {
 			for (auto px : row) {
-				if (rgb == 'r')	{ std::cout << std::setw(cellWidth) << (int)(px.r) << '.'; }
-				else if (rgb == 'g') { std::cout << std::setw(cellWidth) << (int)(px.g) << '.'; }
-				else if (rgb == 'b') { std::cout << std::setw(cellWidth) << (int)(px.b) << '.'; }
+				std::cout << std::setw(cellWidth) << (int)(px.channels[targetChannel]) << ' ';
 			}
 			std::cout << std::endl;
 		}

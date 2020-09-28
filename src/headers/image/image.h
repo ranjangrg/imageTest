@@ -23,7 +23,9 @@ namespace Image {
 	void printPixels(const ImageStruct& imageObj, const char colour);
 	void modifyPixels(ImageStruct &imageObj, const char colour);
 	void clearImageData(ImageStruct imageObj);
+}
 
+namespace Image {
 	// 	=============================
 	// 	 ImageAsPixels class methods
 	//	=============================
@@ -35,8 +37,14 @@ namespace Image {
 		ImageAsPixels(void);
 		ImageAsPixels(const ImageStruct& imageObj);
 
+		// displays all pixel data i.e. calls pixel.info() for each pixel
 		void info();
-		void info(const char& rgb, const int& cellWidth = 3);
+
+		// e.g. if channels are rgb, 
+		// targetChannel = 0, info(0) gives RED, 
+		// targetChannel = 1, info(1) gives GREEN, 
+		// targetChannel = 2, info(2) gives BLUE, 
+		void info(const int& targetChannel, const int& cellWidth = 3);
 	};
 }
 

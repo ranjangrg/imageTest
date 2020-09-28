@@ -77,12 +77,8 @@ int matrixTest() {
 }
 
 int pixelTest() {
-	Image::Pixel dot;
-	dot.r = 20; 
-	dot.g = 41;
-	dot.b = 0;
-	dot.a = 0;
-	Image::pixelInfo(dot);
+	Image::Pixel dot( {20,40,0,4} );
+	dot.info();
 
 	return 0;
 }
@@ -96,13 +92,13 @@ int imageAsPixelsTest() {
 
 	imgPx2.info();
 	std::cout << "RED:" <<  std::endl;
-	imgPx2.info('r');
+	imgPx2.info(0);
 	std::cout << "GREEN:" <<  std::endl;
-	imgPx2.info('g');
+	imgPx2.info(1);
 	std::cout << "BLUE:" <<  std::endl;
-	imgPx2.info('b');
+	imgPx2.info(2);
 
-	imgPx1.info('r');
+	imgPx1.info(0);
 
 	return 0;
 }

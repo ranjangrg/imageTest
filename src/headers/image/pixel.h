@@ -4,11 +4,17 @@
 #include "../basic.h"
 
 namespace Image {
-	typedef struct pixel {
-		unsigned char r, g, b, a;
-	} Pixel;
+	class Pixel {
+	public:
+		unsigned char* channels;
+		unsigned int nChannels;
 
-	void pixelInfo(const Pixel& p);
+		Pixel(const unsigned int& defaultValue = 0);
+		Pixel(std::initializer_list<unsigned char> pixelValues);
+		Pixel(unsigned char* pixelOffset, unsigned int nChannels);	// args: data, number of channels e.g. rgb has 3 channels
+
+		const void info(void);
+	};
 }
 
 #endif
