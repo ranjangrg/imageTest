@@ -12,12 +12,16 @@
 //#pragma pack(2)	// to disable auto-padding of bytes in structs
 
 namespace Image {
+	// a struct that holds image data including number of channels and actual pixel data per channel
 	typedef struct image {
 		int width, height, channels;
 		unsigned char *imgData;
 		//char header[2] {'B', 'M'};	// C++11 allows assignment like this
 	} ImageStruct;
+}
 
+namespace Image {
+	// some useful methods to read/write imagefiles
 	ImageStruct getImageData(const char* fileName);
 	int writeImageToFile(const char* fileToWrite, ImageStruct imageObj);
 	void printPixels(const ImageStruct& imageObj, const char colour);
@@ -33,12 +37,15 @@ namespace Image {
 	private:
 		int width, height, channels;
 		std::vector<std::vector<Pixel>> pixels;
+		// internal methods
+		void _initWithImageStruct(const ImageStruct& imageObj); // used by some constructors
 	public:
 		ImageAsPixels(void);
 		ImageAsPixels(const ImageStruct& imageObj);
+		ImageAsPixels(const char* fileName);
 
 		// displays all pixel data i.e. calls pixel.info() for each pixel
-		void info();
+		void info(void);
 
 		// e.g. if channels are rgb, 
 		// targetChannel = 0, info(0) gives RED, 

@@ -9,6 +9,7 @@ int imageTest() {
 	Image::printPixels(testImage, 'b');
 
 	Image::modifyPixels(testImage, 'r');
+	Image::modifyPixels(testImage, 'g');
 	Image::modifyPixels(testImage, 'b');
 
 	Image::writeImageToFile("./data/delme.png", testImage);
@@ -87,26 +88,37 @@ int imageAsPixelsTest() {
 	Image::ImageStruct testImage;
 	testImage = Image::getImageData("./data/pixel.png");
 
-	Image::ImageAsPixels imgPx1;
-	Image::ImageAsPixels imgPx2(testImage);
+	Image::ImageAsPixels imgPx1(testImage);
+	Image::ImageAsPixels imgPx2;
+	Image::ImageAsPixels imgPx3("./data/pixel.png");
 
-	imgPx2.info();
+	/*
+	imgPx1.info();
 	std::cout << "RED:" <<  std::endl;
-	imgPx2.info(0);
-	std::cout << "GREEN:" <<  std::endl;
-	imgPx2.info(1);
-	std::cout << "BLUE:" <<  std::endl;
-	imgPx2.info(2);
-
 	imgPx1.info(0);
+	std::cout << "GREEN:" <<  std::endl;
+	imgPx1.info(1);
+	std::cout << "BLUE:" <<  std::endl;
+	imgPx1.info(2);
+
+	imgPx2.info(0);
+	*/
+
+	imgPx3.info();
+	std::cout << "RED:" <<  std::endl;
+	imgPx3.info(0);
+	std::cout << "GREEN:" <<  std::endl;
+	imgPx3.info(1);
+	std::cout << "BLUE:" <<  std::endl;
+	imgPx3.info(2);
 
 	return 0;
 }
 
 int main() {
-	//imageTest();
+	imageTest();
 	//pixelTest();
-	imageAsPixelsTest();
+	//imageAsPixelsTest();
 	
 	return 0;
 }

@@ -57,11 +57,13 @@ namespace Image {
 		for (int pixelY = 0; pixelY < imageObj.width; ++pixelY) {
 			for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
 				unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
-				if (pixelOffset[rgbIdx] == 255) {
-					pixelOffset[rgbIdx] = 198 ;
-				}
-				if (pixelOffset[rgbIdx] == 0) {
-					pixelOffset[rgbIdx] = 128 ;
+				if ( (pixelY + pixelX) > imageObj.width ) {
+					unsigned char offset = ( (3 * pixelOffset[rgbIdx] + 5 * pixelOffset[rgbIdx]) ) % 256 ;
+					if (pixelOffset[rgbIdx] == 0) {
+						pixelOffset[rgbIdx] = (pixelOffset[rgbIdx] - (offset * 2)) % 256;
+					} else {
+						pixelOffset[rgbIdx] = (pixelOffset[rgbIdx] + (offset * 2)) % 256;
+					}
 				}
 			}
 		}
@@ -70,19 +72,14 @@ namespace Image {
 	void clearImageData(ImageStruct imageObj) {
 		stbi_image_free(imageObj.imgData);
 	}
+}
 
+namespace Image {
 	// 	=============================
 	// 	 ImageAsPixels class methods
 	//	=============================
 
-	ImageAsPixels::ImageAsPixels(void) {
-		this->width = 0;
-		this->height = 0;
-		this->channels = 0;
-		this->pixels.clear();
-	}
-
-	ImageAsPixels::ImageAsPixels(const ImageStruct& imageObj) {
+	void ImageAsPixels::_initWithImageStruct(const ImageStruct& imageObj) {
 		std::vector<Pixel> row;
 		unsigned bytePerPixel = imageObj.channels;
 		this->width = imageObj.width;
@@ -99,7 +96,23 @@ namespace Image {
 		}
 	}
 
-	void ImageAsPixels::info() {
+	ImageAsPixels::ImageAsPixels(void) {
+		this->width = 0;
+		this->height = 0;
+		this->channels = 0;
+		this->pixels.clear();
+	}
+
+	ImageAsPixels::ImageAsPixels(const ImageStruct& imageObj) {
+		this->_initWithImageStruct(imageObj);
+	}
+
+	ImageAsPixels::ImageAsPixels(const char* fileName) {
+		ImageStruct imageObj = getImageData(fileName);
+		this->_initWithImageStruct(imageObj);
+	}
+
+	void ImageAsPixels::info(void) {
 		for (auto row : this->pixels) {
 			for (auto px : row) {
 				px.info();

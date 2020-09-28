@@ -26,19 +26,3 @@ namespace Image {
 		std::cout <<std::endl;
 	}
 }
-
-/*
-int main() {
-	Image::Pixel px1;
-	Image::Pixel px2( {1,2,3,4} );
-	unsigned char _chnls[5] = {1,3,5,7,9};
-	unsigned char* chnls = _chnls;
-	Image::Pixel px3( chnls, 5 );
-
-	px1.info();
-	px2.info();
-	px3.info();
-
-	return 0;
-}
-*/
