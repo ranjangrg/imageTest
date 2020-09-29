@@ -24,7 +24,7 @@ int imageTest() {
 }
 
 int matrixTest() {
-
+	/*
 	// Matrix initialization
 	Matrix::Matrix<int> mA = Matrix::Matrix<int>(3, 3); 
 	mA.edit(0, 0, 5);
@@ -74,6 +74,41 @@ int matrixTest() {
 	mD.info();
 	std::cout << "mE:" << std::endl;
 	mE.info();
+	*/
+	Matrix::Matrix<int> mA(5, 5);
+	Matrix::Matrix<int> mB({
+		{1, 2, 9},
+		{3, 4, 1},
+		{1, 4, 6},
+		{10, 54, -9}
+		});
+	Matrix::Matrix<int> mC( {1, 2, 9} );
+	mC.addRow({2, 8, 1});
+	mC.edit(0, 0, 500);
+	
+	Matrix::Matrix<int> mScalar1 = mC * 10;
+	Matrix::Matrix<float> mScalar2 = mC * float(1.25);
+	Matrix::Matrix<double> mScalar3 = mC * double(-1.055);
+
+	Matrix::Matrix<int> mSum = mC;
+	Matrix::Matrix<int> mDiff = mScalar1 - mSum;
+
+	std::cout << "mA:" << std::endl;
+	mA.info();
+	std::cout << "mB:" << std::endl;
+	mB.info();
+	std::cout << "mC:" << std::endl;
+	mC.info();
+	std::cout << "mScalar1:" << std::endl;
+	mScalar1.info();
+	std::cout << "mScalar2:" << std::endl;
+	mScalar2.info();
+	std::cout << "mScalar3:" << std::endl;
+	mScalar3.info();
+	std::cout << "mSum:" << std::endl;
+	mSum.info();
+	std::cout << "mDiff:" << std::endl;
+	mDiff.info();
 
 	return 0;
 }
