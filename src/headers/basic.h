@@ -7,4 +7,6 @@
 #include <iomanip>	// for std::cout and format
 #include <unordered_map>
 
+#include "./exceptions.h"	// for custom exceptions
+
 #endif

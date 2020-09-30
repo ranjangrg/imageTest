@@ -5,9 +5,9 @@ namespace Image {
 		int width, height, channels;
 		unsigned char *imgData = stbi_load(fileName, &width, &height, &channels, 0);
 		if (imgData == NULL) {
-			std::cout << "[ERR] Error loading image: " << fileName << std::endl;		
+			std::cout << "\n[ERR] Error loading image: " << fileName << std::endl;		
 		} else {
-			std::cout << "[INFO] Loaded image: " << fileName;
+			std::cout << "\n[INFO] Loaded image: " << fileName;
 			std::cout << "; Dimensions: (" << width << ", " << height;
 			std::cout << "); Channels: " << channels << std::endl;
 		}
@@ -30,9 +30,9 @@ namespace Image {
 			imageObj.imgData, 
 			imageObj.width * imageObj.channels);
 		if (writeSuccessful == 1) {
-			std::cout << "[INFO] Write Successful. File: " << fileToWrite << std::endl;
+			std::cout << "\n[INFO] Write Successful. File: " << fileToWrite << std::endl;
 		} else {
-			std::cerr << "[ERR] Write failed! File: " << fileToWrite << std::endl;
+			std::cerr << "\n[ERR] Write failed! File: " << fileToWrite << std::endl;
 			writeSuccessful = -1;
 		} 
 		return writeSuccessful;
@@ -53,12 +53,12 @@ namespace Image {
 			}
 			std::cout << std::endl;
 		} else {
-			std::cerr << "[ERR] Invalid channel requested via:" << " printPixels(targetChannel = " << targetChannel << ")" << std::endl;
+			std::cerr << "\n[ERR] Invalid channel requested via:" << " printPixels(targetChannel = " << targetChannel << ")" << std::endl;
 		}
 	}
 
 	void modifyPixels(ImageStruct &imageObj, const char colour) {
-		std::cout << "[INFO] Image Modification in progress ... " << std::endl;
+		std::cout << "\n[INFO] Image Modification in progress ... " << std::endl;
 		int rgbIdx = 0;	// for red
 		if (colour == 'g') { rgbIdx = 1; } 
 		if (colour == 'b') { rgbIdx = 2; }
@@ -79,7 +79,7 @@ namespace Image {
 	}
 
 	void clearImageData(ImageStruct imageObj) {
-		std::cout << "[INFO] ImageStruct freed!" << std::endl;
+		std::cout << "\n[INFO] ImageStruct freed!" << std::endl;
 		stbi_image_free(imageObj.imgData);
 	}
 }
@@ -137,7 +137,7 @@ namespace Image {
 				}
 			}
 		} else {
-			std::cerr << "[ERR] Invalid channel requested via:" << " info(" << targetChannel << ")" << std::endl;
+			std::cerr << "\n[ERR] Invalid channel requested via:" << " info(" << targetChannel << ")" << std::endl;
 		}
 	}
 

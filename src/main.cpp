@@ -60,6 +60,8 @@ int matrixTest() {
 	Matrix::Matrix<int> mC( {1, 2, 9} );
 	mC.addRow({2, 8, 1});
 	mC.edit(0, 0, 500);
+
+	Matrix::Matrix<float> mD( {{0.5, 3.14, 5.6, -2.8}} );
 	
 	Matrix::Matrix<int> mScalar1 = mC * 10;
 	Matrix::Matrix<float> mScalar2 = mC * float(1.25);
@@ -75,6 +77,8 @@ int matrixTest() {
 	mB.info();
 	std::cout << "mC:" << std::endl;
 	mC.info();
+	std::cout << "mD:" << std::endl;
+	mD.info();
 	std::cout << "mScalar1:" << std::endl;
 	mScalar1.info();
 	std::cout << "mScalar2:" << std::endl;
@@ -85,6 +89,43 @@ int matrixTest() {
 	mSum.info();
 	std::cout << "mDiff:" << std::endl;
 	mDiff.info();
+
+	// these methods should fail and throw exception
+	std::cout << "mDiff: get(1000, 0) ";
+	try {
+		std::cout << mDiff(1000,0) << std::endl;
+	} catch (Matrix::getException& e) {
+		std::cout << e.what() << std::endl;
+	}
+	std::cout << "mDiff: addRow({1,4,3,2,5,6}) ";
+	try {
+		mDiff.addRow({1,4,3,2,5,6});
+	} catch (Matrix::addRowException& e) {
+		std::cout << e.what() << std::endl;
+	}
+	std::cout << "mDiff: mDiff.edit(1000,0, -8)";
+	try {
+		mDiff.edit(1000,0, -8);
+	} catch (Matrix::editException& e) {
+		std::cout << e.what() << std::endl;
+	}
+	std::cout << "mBadArgument({ ... })";
+	try {
+		Matrix::Matrix<int> mBadArgument({
+			{1, 2, 9},
+			{3, 4, 1},
+			{1, 4, 6},
+			{10, 54, -9, 0}
+			});
+	} catch (Matrix::constructorBadArgumentException& e) {
+		std::cout << e.what() << std::endl;
+	}
+	std::cout << "mC + mD:";
+	try {
+		Matrix::Matrix<float> mSumBad = Matrix::_addMatrices(mD, mC);
+	} catch (Matrix::addException& e) {
+		std::cout << e.what() << std::endl;
+	}
 
 	testEnd(testName);
 	return 0;
@@ -130,8 +171,8 @@ int main() {
 	std::unordered_map<std::string, bool> performTests = {
 		{"imageTest", false},
 		{"pixelTest", false},
-		{"imageAsPixelsTest", true},
-		{"matrixTest", false}
+		{"imageAsPixelsTest", false},
+		{"matrixTest", true}
 	};
 
 	if (performTests["imageTest"]) {imageTest();}

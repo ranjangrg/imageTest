@@ -25,7 +25,7 @@ namespace Image {
 	}
 
 	void dumpPixelInfo(const Pixel& pixel) {
-		std::cout << "[INFO] [PIXEL] Channels: " << pixel.nChannels << "; Values: ";
+		std::cout << "\n[INFO] [PIXEL] Channels: " << pixel.nChannels << "; Values: ";
 		for (unsigned int idx = 0; idx < pixel.nChannels; ++idx) {
 			std::cout << (int)(pixel.channels[idx]) << ", ";
 		}

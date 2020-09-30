@@ -30,7 +30,6 @@ namespace Matrix {
 
 		// 
 		const unsigned int* getDims() const;
-		const bool haveSameDims(const Matrix<T>& otherM) const;
 
 		// Access operator: matrixObj(row, col)
 		T& operator () (const unsigned int& rowIdx, const unsigned int& colIdx);
@@ -57,8 +56,14 @@ namespace Matrix {
 	| special methods definition for matrices |
 	===========================================
 	*/
+	template <typename T, typename U>
+	const bool _compareDims(const Matrix<U>& matA, const Matrix<U>& matB);
+
 	template <typename T>
 	Matrix<T>& _addMatrices(const Matrix<T>& lhs, const Matrix<T>& rhs);
+
+	template <typename T, typename U>
+	Matrix<T>& _addMatrices(const Matrix<T>& lhs, const Matrix<U>& rhs);
 
 	template <typename T, typename U>
 	Matrix<U>& _multiplyMatrixWithScalar(const Matrix<T>& mat, const U& scalarFactor);
@@ -114,7 +119,7 @@ namespace Matrix {
 				this->data.clear();
 				this->nRows = 0;
 				this->nCols = 0;
-				std::cerr << "[ERR] Bad data (as argument) for Matrix constructor." << std::endl;
+				throw constructorBadArgumentException();
 			}
 		}
 	}
@@ -128,13 +133,17 @@ namespace Matrix {
 			this->nRows = 1;
 			this->nCols = rowOnly.size();
 		} else {
-			std::cerr << "[ERR] Invalid row data: Empty row." << std::endl;
+			throw constructorBadArgumentException();
 		}
 	}
 
 	template <typename T>
 	T& Matrix<T>::get(const unsigned int& rowIdx, const unsigned int& colIdx) const {
-		T value = this->data.at((rowIdx * this->nCols) + colIdx);
+		bool validIdx = (rowIdx < this->nRows) && (colIdx < this->nCols);
+		if (!validIdx) {
+			throw getException();
+		}
+		T value = this->data.at((rowIdx * this->nCols) + colIdx);		
 		T& valueRef = value;
 		return valueRef;
 	}
@@ -149,7 +158,7 @@ namespace Matrix {
 			this->nRows++;
 		} catch (...) {
 			isAddSuccessful = false;
-			std::cerr << "[ERR] Matrix: Adding row failed! Columns count doesn't match." << std::endl;
+			throw addRowException();
 		}
 		return isAddSuccessful;
 	}
@@ -163,19 +172,14 @@ namespace Matrix {
 
 	template <typename T>
 	void Matrix<T>::edit(unsigned rowIdx, unsigned colIdx, const T& value) {
-		try {
-			// check if row and col out of index range 
-			if ( 
-				(rowIdx < 0) || (colIdx < 0) ||	// not needed probably: should be apparent it is unsigned 
-				(rowIdx >= this->nRows) || (colIdx >= this->nCols)
-			) {
-				std::string msg =  "[ERR] Matrix edit failed! (row: " + std::to_string(rowIdx) + ", col: " + std::to_string(colIdx) + ") = " + std::to_string(value);
-				throw msg;
-			}
-			this->data.at((rowIdx * this->nCols) + colIdx) = value;
-		} catch (std::string msg) {
-			std::cerr << msg << std::endl;
+		// check if row and col out of index range 
+		if ( 
+			(rowIdx < 0) || (colIdx < 0) ||	// not needed probably: should be apparent it is unsigned 
+			(rowIdx >= this->nRows) || (colIdx >= this->nCols)
+		) {
+			throw editException();
 		}
+		this->data.at((rowIdx * this->nCols) + colIdx) = value;
 	}
 
 	template <typename T>
@@ -199,14 +203,6 @@ namespace Matrix {
 		size[0] = this->nRows;
 		size[1] = this->nCols;
 		return size;
-	}
-
-	template <typename T>
-	const bool Matrix<T>::haveSameDims(const Matrix<T>& otherM) const{
-		bool isSameDim = true;
-		isSameDim = isSameDim && (this->nRows == otherM.nRows);
-		isSameDim = isSameDim && (this->nCols == otherM.nCols);
-		return isSameDim;
 	}
 
 	template <typename T>
@@ -260,6 +256,14 @@ namespace Matrix {
 	===============================================
 	*/
 
+	template <typename T, typename U>
+	const bool _compareDims(const Matrix<T>& matA, const Matrix<U>& matB) {
+		bool isSameDim = true;
+		isSameDim = isSameDim && (matA.nRows == matB.nRows);
+		isSameDim = isSameDim && (matA.nCols == matB.nCols);
+		return isSameDim;
+	}
+
 	template <typename T>
 	Matrix<T>& _addMatrices(const Matrix<T>& lhs, const Matrix<T>& rhs) {
 		const unsigned int* lhsDims = lhs.getDims();
@@ -267,8 +271,7 @@ namespace Matrix {
 		const unsigned int lhsRows = lhsDims[0], lhsCols = lhsDims[1];		
 		const unsigned int rhsRows = rhsDims[0], rhsCols = rhsDims[1];
 		Matrix<T>* sum;
-		std::cout << "(0, 0): " << lhs.get(0, 0) << std::endl;
-		if ( lhs.haveSameDims(rhs) ) {
+		if ( _compareDims(lhs, rhs) ) {
 			sum = new Matrix<T>(rhsRows, rhsCols);
 			for (unsigned rowIdx = 0; rowIdx < lhsRows; ++rowIdx) {
 				for (unsigned colIdx = 0; colIdx < lhsCols; ++colIdx) {
@@ -277,9 +280,28 @@ namespace Matrix {
 				}
 			}
 		} else {
-			std::string msg = "[ERR] Matrix Addition failed! Dimensions not same!";
-			std::cerr << msg << std::endl;
-			sum = new Matrix<T>(0, 0);
+			throw addException();
+		}
+		return *sum;
+	}
+
+	template <typename T, typename U>
+	Matrix<T>& _addMatrices(const Matrix<T>& lhs, const Matrix<U>& rhs) {
+		const unsigned int* lhsDims = lhs.getDims();
+		const unsigned int* rhsDims = rhs.getDims();
+		const unsigned int lhsRows = lhsDims[0], lhsCols = lhsDims[1];		
+		const unsigned int rhsRows = rhsDims[0], rhsCols = rhsDims[1];
+		Matrix<T>* sum;
+		if ( _compareDims(lhs, rhs) ) {
+			sum = new Matrix<T>(rhsRows, rhsCols);
+			for (unsigned rowIdx = 0; rowIdx < lhsRows; ++rowIdx) {
+				for (unsigned colIdx = 0; colIdx < lhsCols; ++colIdx) {
+					unsigned idxWithinMatrix = (rowIdx * lhsCols) + colIdx;
+					sum->data.at(idxWithinMatrix) = lhs.data.at(idxWithinMatrix) + rhs.data.at(idxWithinMatrix);
+				}
+			}
+		} else {
+			throw addException();
 		}
 		return *sum;
 	}
