@@ -1,7 +1,7 @@
 #include "./headers/main.h"
 
-void testStart(std::string testName) { std::cout << "[TEST] " << testName << " STARTED." <<  std::endl; }
-void testEnd(std::string testName) { std::cout << "[TEST] " << testName << " ENDED." <<  std::endl; }
+void testStart(std::string testName) { std::cout << "[TEST] '" << testName << "' STARTED." <<  std::endl; }
+void testEnd(std::string testName) { std::cout << "[TEST] '" << testName << "' ENDED." <<  std::endl; }
 
 int imageTest() {
 	std::string testName = "imageTest()";
@@ -94,7 +94,7 @@ int pixelTest() {
 	std::string testName = "pixelTest()";
 	testStart(testName);
 
-	Image::Pixel dot( {20,40,0,4} );
+	Image::Pixel dot = Image::createPixel( {20,40,0,4} );
 	Image::dumpPixelInfo(dot);
 	
 	testEnd(testName);
@@ -125,10 +125,17 @@ int imageAsPixelsTest() {
 }
 
 int main() {
-	//imageTest();
-	//pixelTest();
-	imageAsPixelsTest();
-	//matrixTest();
+	std::unordered_map<std::string, bool> performTests = {
+		{"imageTest", true},
+		{"pixelTest", true},
+		{"imageAsPixelsTest", true},
+		{"matrixTest", true}
+	};
+
+	if (performTests["imageTest"]) {imageTest();}
+	if (performTests["pixelTest"]) {pixelTest();}
+	if (performTests["imageAsPixelsTest"]) {imageAsPixelsTest();}
+	if (performTests["matrixTest"]) {matrixTest();}
 	
 	return 0;
 }

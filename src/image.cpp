@@ -107,7 +107,7 @@ namespace Image {
 			row.clear();			
 			for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
 				unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
-				Pixel px(pixelOffset, imageObj.channels);
+				Pixel px = createPixel(pixelOffset, imageObj.channels);
 				row.push_back(px);
 			}
 			this->pixels.push_back(row);
