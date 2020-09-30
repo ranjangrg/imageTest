@@ -11,15 +11,8 @@ namespace Matrix {
 	*/
 	template <typename T>
 	class Matrix {
-	/*
-	// class state being public is more convenient
-	private:
-		unsigned int nRows, nCols;
-		// TODO: implement single vector to represent Matrices.
-		std::vector<T> data;
-	*/
 	public:
-		// class states
+		// class state being public is more convenient
 		unsigned int nRows, nCols;
 		std::vector<T> data;
 
@@ -35,7 +28,7 @@ namespace Matrix {
 		void edit(unsigned rowIdx, unsigned colIdx, const T& value);
 		void info(int cellWidth = 3) const;	// cellWidth = 3 is good enough for signed ints between -999 to 999
 
-		//
+		// 
 		const unsigned int* getDims() const;
 		const bool haveSameDims(const Matrix<T>& otherM) const;
 

@@ -90,19 +90,16 @@ namespace Image {
 	//	=============================
 
 	void ImageAsPixels::_initWithImageStruct(const ImageStruct& imageObj) {
-		std::vector<Pixel> row;
 		unsigned bytePerPixel = imageObj.channels;
 		this->width = imageObj.width;
 		this->height = imageObj.height;
 		this->channels = imageObj.channels;
 		for (int pixelY = 0; pixelY < imageObj.width; ++pixelY) {
-			row.clear();			
 			for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
 				unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
 				Pixel px = createPixel(pixelOffset, imageObj.channels);
-				row.push_back(px);
+				this->pixels.push_back(px);
 			}
-			this->pixels.push_back(row);
 		}
 	}
 
@@ -123,22 +120,21 @@ namespace Image {
 	}
 
 	void ImageAsPixels::info(void) {
-		for (auto row : this->pixels) {
-			for (auto px : row) {
-				dumpPixelInfo(px);
-			}
+		for (auto px : this->pixels) {
+			dumpPixelInfo(px);
 		}
 	}
 
 	void ImageAsPixels::info(const unsigned int& targetChannel, const int& cellWidth) {
 		bool channelIsValid = this->channels > targetChannel;
 		if (channelIsValid) {
-			// cellWidth ONLY for string format
-			for (auto row : this->pixels) {
-				for (auto px : row) {
-					std::cout << std::setw(cellWidth) << (int)(px.channels[targetChannel]) << ' ';
+			unsigned long int pixelCount = 0;
+			for (auto px : this->pixels) {
+				// cellWidth ONLY for string format
+				std::cout << std::setw(cellWidth) << (int)(px.channels[targetChannel]) << ' ';
+				if ( ( (++pixelCount) % this->width) == 0 ) {
+					std::cout << std::endl;
 				}
-				std::cout << std::endl;
 			}
 		} else {
 			std::cerr << "[ERR] Invalid channel requested via:" << " info(" << targetChannel << ")" << std::endl;

@@ -120,16 +120,18 @@ int imageAsPixelsTest() {
 	std::cout << "BLUE:" <<  std::endl;
 	imgPx3.info(2);
 
+	//imgPx3.info();
+
 	testEnd(testName);
 	return 0;
 }
 
 int main() {
 	std::unordered_map<std::string, bool> performTests = {
-		{"imageTest", true},
-		{"pixelTest", true},
+		{"imageTest", false},
+		{"pixelTest", false},
 		{"imageAsPixelsTest", true},
-		{"matrixTest", true}
+		{"matrixTest", false}
 	};
 
 	if (performTests["imageTest"]) {imageTest();}

@@ -36,7 +36,7 @@ namespace Image {
 	class ImageAsPixels {
 		private:
 			int width, height, channels;
-			std::vector<std::vector<Pixel>> pixels;
+			std::vector<Pixel> pixels;
 			// internal methods
 			void _initWithImageStruct(const ImageStruct& imageObj); // used by some constructors
 		public:
