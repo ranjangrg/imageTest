@@ -21,10 +21,11 @@ namespace Image {
 }
 
 namespace Image {
-	// some useful methods to read/write imagefiles
+	// some useful methods related to image e.g. read/write imagefiles
 	ImageStruct getImageData(const char* fileName);
 	int writeImageToFile(const char* fileToWrite, ImageStruct imageObj);
-	void printPixels(const ImageStruct& imageObj, const char colour);
+	void dumpPixelInfo(const Pixel& pixel);
+	void printPixels(const ImageStruct& imageObj, const unsigned int targetChannel);
 	void modifyPixels(ImageStruct &imageObj, const char colour);
 	void clearImageData(ImageStruct imageObj);
 }
@@ -34,24 +35,24 @@ namespace Image {
 	// 	 ImageAsPixels class methods
 	//	=============================
 	class ImageAsPixels {
-	private:
-		int width, height, channels;
-		std::vector<std::vector<Pixel>> pixels;
-		// internal methods
-		void _initWithImageStruct(const ImageStruct& imageObj); // used by some constructors
-	public:
-		ImageAsPixels(void);
-		ImageAsPixels(const ImageStruct& imageObj);
-		ImageAsPixels(const char* fileName);
+		private:
+			int width, height, channels;
+			std::vector<std::vector<Pixel>> pixels;
+			// internal methods
+			void _initWithImageStruct(const ImageStruct& imageObj); // used by some constructors
+		public:
+			ImageAsPixels(void);
+			ImageAsPixels(const ImageStruct& imageObj);	// use an imageStruct (struct/obj?) as constructor param
+			ImageAsPixels(const char* fileName);
 
-		// displays all pixel data i.e. calls pixel.info() for each pixel
-		void info(void);
+			// displays all pixel data i.e. calls dumpPixelInfo() with each pixel
+			void info(void);
 
-		// e.g. if channels are rgb, 
-		// targetChannel = 0, info(0) gives RED, 
-		// targetChannel = 1, info(1) gives GREEN, 
-		// targetChannel = 2, info(2) gives BLUE, 
-		void info(const int& targetChannel, const int& cellWidth = 3);
+			// e.g. if channels are rgb, 
+			// targetChannel = 0, info(0) gives RED, 
+			// targetChannel = 1, info(1) gives GREEN, 
+			// targetChannel = 2, info(2) gives BLUE, 
+			void info(const unsigned int& targetChannel, const int& cellWidth = 3);
 	};
 }
 

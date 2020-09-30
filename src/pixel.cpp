@@ -18,6 +18,8 @@ namespace Image {
 		this->nChannels = nChannels;
 	}
 
+	/*
+	// see "pixel.h" for details on excluding this method
 	const void Pixel::info(void) {
 		std::cout << "[INFO] [PIXEL] Channels: " << this->nChannels << "; Values: ";
 		for (unsigned int idx = 0; idx < this->nChannels; ++idx) {
@@ -25,4 +27,5 @@ namespace Image {
 		}
 		std::cout <<std::endl;
 	}
+	*/
 }

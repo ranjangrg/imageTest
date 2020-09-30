@@ -13,7 +13,10 @@ namespace Image {
 		Pixel(std::initializer_list<unsigned char> pixelValues);
 		Pixel(unsigned char* pixelOffset, unsigned int nChannels);	// args: data, number of channels e.g. rgb has 3 channels
 
-		const void info(void);
+		// better to have external method handle this instead of 
+		// making this a class method (it may increase memory footprint)
+		// of each pixel
+		//const void info(void); 
 	};
 }
 
