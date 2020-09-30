@@ -38,14 +38,6 @@ namespace Image {
 		return writeSuccessful;
 	}
 
-	void dumpPixelInfo(const Pixel& pixel) {
-		std::cout << "[INFO] [PIXEL] Channels: " << pixel.nChannels << "; Values: ";
-		for (unsigned int idx = 0; idx < pixel.nChannels; ++idx) {
-			std::cout << (int)(pixel.channels[idx]) << ", ";
-		}
-		std::cout <<std::endl;
-	}
-
 	void printPixels(const ImageStruct& imageObj, const unsigned int targetChannel) {
 		// make sure the channel is valid or else
 		// it will dump garbage data

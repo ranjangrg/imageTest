@@ -24,7 +24,6 @@ namespace Image {
 	// some useful methods related to image e.g. read/write imagefiles
 	ImageStruct getImageData(const char* fileName);
 	int writeImageToFile(const char* fileToWrite, ImageStruct imageObj);
-	void dumpPixelInfo(const Pixel& pixel);
 	void printPixels(const ImageStruct& imageObj, const unsigned int targetChannel);
 	void modifyPixels(ImageStruct &imageObj, const char colour);
 	void clearImageData(ImageStruct imageObj);
