@@ -25,10 +25,10 @@ namespace Image {
 	}
 
 	void dumpPixelInfo(const Pixel& pixel) {
-		std::cout << "\n[INFO] [PIXEL] Channels: " << pixel.nChannels << "; Values: ";
+		std::string infoMsg = "Channels: " + std::to_string(pixel.nChannels) + "; Values: ";
 		for (unsigned int idx = 0; idx < pixel.nChannels; ++idx) {
-			std::cout << (int)(pixel.channels[idx]) << ", ";
+			infoMsg += std::to_string((int)(pixel.channels[idx])) + ", ";
 		}
-		std::cout <<std::endl;
+		Logger::logInfo("Pixel", infoMsg);
 	}
 }

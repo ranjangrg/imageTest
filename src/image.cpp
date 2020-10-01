@@ -5,11 +5,13 @@ namespace Image {
 		int width, height, channels;
 		unsigned char *imgData = stbi_load(fileName, &width, &height, &channels, 0);
 		if (imgData == NULL) {
-			std::cout << "\n[ERR] Error loading image: " << fileName << std::endl;		
+			std::string errMsg = "Error loading image: " + std::string(fileName);
+			Logger::logError("Image", errMsg);
 		} else {
-			std::cout << "\n[INFO] Loaded image: " << fileName;
-			std::cout << "; Dimensions: (" << width << ", " << height;
-			std::cout << "); Channels: " << channels << std::endl;
+			std::string infoMsg = "Loaded file: '" + std::string(fileName) + "'; ";
+			infoMsg +=  "Dimensions: (" + std::to_string(width) + ", " + std::to_string(height) + "); ";
+			infoMsg +=  "Channels: " + std::to_string(channels);
+			Logger::logInfo("Image", infoMsg);
 		}
 
 		// Creating Image object to return
@@ -30,9 +32,11 @@ namespace Image {
 			imageObj.imgData, 
 			imageObj.width * imageObj.channels);
 		if (writeSuccessful == 1) {
-			std::cout << "\n[INFO] Write Successful. File: " << fileToWrite << std::endl;
+			std::string infoMsg = "Write Successful. File: " + std::string(fileToWrite);
+			Logger::logInfo("Image", infoMsg);
 		} else {
-			std::cerr << "\n[ERR] Write failed! File: " << fileToWrite << std::endl;
+			std::string errMsg = "Write failed! File: " + std::string(fileToWrite);
+			Logger::logError("Image", errMsg);
 			writeSuccessful = -1;
 		} 
 		return writeSuccessful;
@@ -53,12 +57,13 @@ namespace Image {
 			}
 			std::cout << std::endl;
 		} else {
-			std::cerr << "\n[ERR] Invalid channel requested via:" << " printPixels(targetChannel = " << targetChannel << ")" << std::endl;
+			std::string errMsg = "Invalid channel requested via: printPixels(targetChannel = " + std::to_string(targetChannel) + ")";
+			Logger::logError("Image", errMsg);
 		}
 	}
 
 	void modifyPixels(ImageStruct &imageObj, const char colour) {
-		std::cout << "\n[INFO] Image Modification in progress ... " << std::endl;
+		Logger::logInfo("Image", "Image Modification in progress ... ");
 		int rgbIdx = 0;	// for red
 		if (colour == 'g') { rgbIdx = 1; } 
 		if (colour == 'b') { rgbIdx = 2; }
@@ -79,7 +84,7 @@ namespace Image {
 	}
 
 	void clearImageData(ImageStruct imageObj) {
-		std::cout << "\n[INFO] ImageStruct freed!" << std::endl;
+		Logger::logInfo("Image", "ImageStruct freed!");
 		stbi_image_free(imageObj.imgData);
 	}
 }
@@ -137,7 +142,8 @@ namespace Image {
 				}
 			}
 		} else {
-			std::cerr << "\n[ERR] Invalid channel requested via:" << " info(" << targetChannel << ")" << std::endl;
+			std::string errMsg = "Invalid channel requested via: info(targetChannel = " + std::to_string(targetChannel) + ")";
+			Logger::logError("Image", errMsg);
 		}
 	}
 

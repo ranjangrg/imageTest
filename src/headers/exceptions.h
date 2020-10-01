@@ -13,7 +13,7 @@ namespace Matrix {
 
 	struct editException : public std::exception {
 		const char * what() const throw() {
-			return "\n[ERR] [Matrix] edit(rowIdx, colIdx) failed!\n"; 
+			return "\n[ERR] [Matrix] edit(rowIdx, colIdx) failed! Invalid index values.\n"; 
 		}
 	};
 

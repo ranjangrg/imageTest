@@ -4,6 +4,7 @@ COMPILER=g++
 CFLAGS=--std=c++14
 
 SOURCES=./src/main.cpp
+SOURCES+=./src/logger.cpp
 SOURCES+=./src/pixel.cpp
 SOURCES+=./src/image.cpp
 SOURCES+=./src/stb.cpp

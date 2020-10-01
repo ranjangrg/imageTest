@@ -7,6 +7,8 @@
 #include <iomanip>	// for std::cout and format
 #include <unordered_map>
 
+// custom header files
+#include "./logger.h"	// for custom logging methods
 #include "./exceptions.h"	// for custom exceptions
 
 #endif

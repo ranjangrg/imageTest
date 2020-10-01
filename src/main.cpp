@@ -1,7 +1,13 @@
 #include "./headers/main.h"
 
-void testStart(std::string testName) { std::cout << "[TEST] '" << testName << "' STARTED." <<  std::endl; }
-void testEnd(std::string testName) { std::cout << "[TEST] '" << testName << "' ENDED." <<  std::endl; }
+void testStart(std::string testName) { 
+	std::string msg = std::string(testName) + "' STARTED."; 
+	Logger::logInfo("TEST", msg);
+}
+void testEnd(std::string testName) { 
+	std::string msg = std::string(testName) + "' ENDED."; 
+	Logger::logInfo("TEST", msg);
+}
 
 int imageTest() {
 	std::string testName = "imageTest()";
@@ -163,6 +169,20 @@ int imageAsPixelsTest() {
 
 	//imgPx3.info();
 
+	// these methods should fail
+	std::cout << "imgPx3.info(200):" <<  std::endl;
+	imgPx3.info(200);
+
+	testEnd(testName);
+	return 0;
+}
+
+int loggerTest() {
+	std::string testName = "loggerTest()";
+	testStart(testName);
+
+	Logger::logInfo("Pop", "Eaten");
+	
 	testEnd(testName);
 	return 0;
 }
@@ -170,15 +190,17 @@ int imageAsPixelsTest() {
 int main() {
 	std::unordered_map<std::string, bool> performTests = {
 		{"imageTest", false},
-		{"pixelTest", false},
+		{"pixelTest", true},
 		{"imageAsPixelsTest", false},
-		{"matrixTest", true}
+		{"matrixTest", false},
+		{"loggerTest", false}
 	};
 
 	if (performTests["imageTest"]) {imageTest();}
 	if (performTests["pixelTest"]) {pixelTest();}
 	if (performTests["imageAsPixelsTest"]) {imageAsPixelsTest();}
 	if (performTests["matrixTest"]) {matrixTest();}
+	if (performTests["loggerTest"]) {loggerTest();}
 	
 	return 0;
 }
