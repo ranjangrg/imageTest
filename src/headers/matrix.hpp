@@ -67,6 +67,10 @@ namespace Matrix {
 
 	template <typename T, typename U>
 	Matrix<U>& _multiplyMatrixWithScalar(const Matrix<T>& mat, const U& scalarFactor);
+
+	// TODO: convulate a matrix using another matrix
+	template <typename T>
+	Matrix<T>& _convulateUsingMatrix(const Matrix<T>& mat, const Matrix<T>& kernelMat);
 }
 
 namespace Matrix {
@@ -313,6 +317,41 @@ namespace Matrix {
 			productMatrix->data.at(idx) = mat.data.at(idx) * scalarFactor;
 		}
 		return *productMatrix;
+	}
+
+	// TODO: convulate a matrix using another matrix
+	template <typename T>
+	Matrix<T>& _convulateUsingMatrix(const Matrix<T>& mat, const Matrix<T>& kernelMat) {
+		Matrix<T>* resultantMatrix = new Matrix<T>(mat.nRows, mat.nCols);
+		// variable declarations
+		T value, valueAtMat, valueAtKernel;
+		signed int rowOffset, colOffset, currMatRowIdx, currMatColIdx;
+
+		for (unsigned int matRowIdx = 0; matRowIdx < mat.nRows; ++matRowIdx) {
+			for (unsigned int matColIdx = 0; matColIdx < mat.nCols; ++matColIdx) {
+				// loop through the kernel now
+				value = 0;
+				for (unsigned int kernelRowIdx = 0; kernelRowIdx < kernelMat.nRows; ++kernelRowIdx) {
+					for (unsigned int kernelColIdx = 0; kernelColIdx < kernelMat.nCols; ++kernelColIdx) {
+						rowOffset = (-1 * int((kernelMat.nRows + 1) / 2)) + 1;
+						colOffset = (-1 * int((kernelMat.nCols + 1) / 2)) + 1;
+						valueAtKernel = kernelMat.data[kernelRowIdx * kernelMat.nRows + kernelColIdx];
+						currMatRowIdx = matRowIdx + kernelRowIdx + rowOffset;
+						currMatColIdx = matColIdx + kernelColIdx + colOffset;
+						if ( 
+							(currMatRowIdx >= 0) && (currMatColIdx >= 0) &&
+							(currMatRowIdx < mat.nRows) && (currMatColIdx < mat.nCols)
+						) {
+							// proceed only if row/col indices are valid(+ve) and within range
+							valueAtMat = mat.data[(currMatRowIdx * mat.nRows) + currMatColIdx];
+							value += (valueAtMat * valueAtKernel);
+						}
+					}
+				}
+				resultantMatrix->edit(matRowIdx, matColIdx, value) ;
+			}
+		}
+		return *resultantMatrix;
 	}
 
 }

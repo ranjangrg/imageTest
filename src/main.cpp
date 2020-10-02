@@ -18,8 +18,8 @@ int imageTest() {
 	bool showDumpAfter = false;
 	Image::ImageStruct testImage;
 
-	testImage = Image::getImageData("./data/pixel.png");
-	//testImage = Image::getImageData("./data/test.jpg");
+	//testImage = Image::getImageData("./data/pixel.png");
+	testImage = Image::getImageData("./data/test.jpg");
 	
 	Image::printPixels(testImage, 50);
 
@@ -187,13 +187,52 @@ int loggerTest() {
 	return 0;
 }
 
+int matrixConvolutionTest() {
+	std::string testName = "matrixConvolutionTest()";
+	
+	Matrix::Matrix<unsigned int> imageMatrix({
+		{5, 5, 0, 5, 5}, 
+		{5, 0, 5, 0, 5}, 
+		{0, 5, 0, 5, 0}, 
+		{5, 0, 5, 0, 5}, 
+		{5, 5, 0, 5, 5}
+	});
+	Matrix::Matrix<unsigned int> convMatrix({
+		{0, 1, 0}, 
+		{2, 2, 5}, 
+		{5, 5, 0}
+	});
+
+	Matrix::Matrix<unsigned int> convolutedImageMatrix = Matrix::_convulateUsingMatrix(imageMatrix, convMatrix);
+	
+	// dumping matrices
+	imageMatrix.info();
+	convMatrix.info();
+	convolutedImageMatrix.info();
+
+	/*
+	// correct convoluted matrix
+	---------------------
+ 	 60  45  60  60  45 
+ 	 15  65  35  65  40 
+ 	 55  35  65  35  40 
+ 	 35  90  35  65  60 
+ 	 40  20  40  35  25 
+	---------------------
+	*/
+
+	testEnd(testName);
+	return 0;
+}
+
 int main() {
 	std::unordered_map<std::string, bool> performTests = {
 		{"imageTest", false},
-		{"pixelTest", true},
+		{"pixelTest", false},
 		{"imageAsPixelsTest", false},
 		{"matrixTest", false},
-		{"loggerTest", false}
+		{"loggerTest", false},
+		{"matrixConvolutionTest", true}
 	};
 
 	if (performTests["imageTest"]) {imageTest();}
@@ -201,6 +240,7 @@ int main() {
 	if (performTests["imageAsPixelsTest"]) {imageAsPixelsTest();}
 	if (performTests["matrixTest"]) {matrixTest();}
 	if (performTests["loggerTest"]) {loggerTest();}
+	if (performTests["matrixConvolutionTest"]) {matrixConvolutionTest();}
 	
 	return 0;
 }
