@@ -99,8 +99,8 @@ namespace Image {
 		this->width = imageObj.width;
 		this->height = imageObj.height;
 		this->nChannels = imageObj.nChannels;
-		
-		Pixel px = createPixel();
+
+		Pixel px = createPixel(imageObj.nChannels);
 		Matrix::Matrix<Pixel>* pixelList = new Matrix::Matrix<Pixel>(this->height, this->width, px);
 		this->pixels = pixelList;
 		for (unsigned int rowIdx = 0; rowIdx < imageObj.height; ++rowIdx) {

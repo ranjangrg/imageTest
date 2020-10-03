@@ -28,6 +28,8 @@ namespace Image {
 	void printPixels(const ImageStruct& imageObj, const unsigned int targetChannel);
 	void modifyPixels(ImageStruct &imageObj, const char colour);
 	void clearImageData(ImageStruct imageObj);
+	// TODO convolute method
+	//ImageStruct& convoluteImageUsingKernel (const ImageStruct& imageSt, const kernel);
 }
 
 namespace Image {

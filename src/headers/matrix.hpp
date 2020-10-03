@@ -23,6 +23,7 @@ namespace Matrix {
 		//~Matrix();
 
 		// CRUD
+		T& getFirst() const;
 		T& get(const unsigned int& rowIdx, const unsigned int& colIdx) const;
 		bool addRow(std::vector<T> row);
 		bool addRow(std::initializer_list<T> row);
@@ -78,7 +79,11 @@ namespace Matrix {
 	Matrix<U>& _multiplyMatrixWithScalar(const Matrix<T>& mat, const U& scalarFactor);
 
 	template <typename T>
-	Matrix<T>& _convulateUsingMatrix(const Matrix<T>& mat, const Matrix<T>& kernelMat);
+	Matrix<T>& _convoluteUsingMatrix(const Matrix<T>& mat, const Matrix<T>& kernelMat);
+
+	// special method for Pixel matrix
+	template <typename T>
+	Matrix<Image::Pixel>& _convoluteUsingMatrix(const Matrix<Image::Pixel>& mat, const Matrix<T>& kernelMat);
 
 	template <typename T, typename U>
 	bool _areSame(const Matrix<T>& lhs, const Matrix<U>& rhs);
@@ -96,6 +101,10 @@ namespace Matrix {
 		this->data.reserve(nRows * nCols);
 		this->nRows = nRows;
 		this->nCols = nCols;
+		for (int idx = 0; idx < (nRows * nCols); ++idx) {
+			T defaultValue = T();
+			this->data.push_back(defaultValue);
+		}
 	}
 
 	template <typename T>
@@ -158,6 +167,16 @@ namespace Matrix {
 		} else {
 			throw constructorBadArgumentException();
 		}
+	}
+
+	template <typename T>
+	T& Matrix<T>::getFirst() const {
+		if ( (this->nRows + this->nCols) <= 0 ) {
+			throw noDataException();
+		}
+		T value = this->data.at(0);
+		T& valueRef = value;
+		return valueRef;
 	}
 
 	template <typename T>
@@ -361,16 +380,16 @@ namespace Matrix {
 
 	// convulate a matrix using another matrix
 	template <typename T>
-	Matrix<T>& _convulateUsingMatrix(const Matrix<T>& mat, const Matrix<T>& kernelMat) {
+	Matrix<T>& _convoluteUsingMatrix(const Matrix<T>& mat, const Matrix<T>& kernelMat) {
 		Matrix<T>* resultantMatrix = new Matrix<T>(mat.nRows, mat.nCols);
 		// variable declarations
 		T value, valueAtMat, valueAtKernel;
 		signed int rowOffset, colOffset, currMatRowIdx, currMatColIdx;
-
+	
 		for (unsigned int matRowIdx = 0; matRowIdx < mat.nRows; ++matRowIdx) {
 			for (unsigned int matColIdx = 0; matColIdx < mat.nCols; ++matColIdx) {
 				// loop through the kernel now
-				value = 0;
+				value = T();
 				for (unsigned int kernelRowIdx = 0; kernelRowIdx < kernelMat.nRows; ++kernelRowIdx) {
 					for (unsigned int kernelColIdx = 0; kernelColIdx < kernelMat.nCols; ++kernelColIdx) {
 						rowOffset = (-1 * int((kernelMat.nRows + 1) / 2)) + 1;
@@ -384,7 +403,46 @@ namespace Matrix {
 						) {
 							// proceed only if row/col indices are valid(+ve) and within range
 							valueAtMat = mat.data[(currMatRowIdx * mat.nRows) + currMatColIdx];
-							value += (valueAtMat * valueAtKernel);
+							value = value + (valueAtMat * valueAtKernel);
+						}
+					}
+				}
+				resultantMatrix->edit(matRowIdx, matColIdx, value) ;
+			}
+		}
+		return *resultantMatrix;
+	}
+
+	// convulate a matrix using another matrix (FIND A BETTER SOLUTION)
+	template <typename T>
+	Matrix<Image::Pixel>& _convoluteUsingMatrix(const Matrix<Image::Pixel>& mat, const Matrix<T>& kernelMat) {
+		Matrix<Image::Pixel>* resultantMatrix = new Matrix<Image::Pixel>(mat.nRows, mat.nCols);
+		// variable declarations
+		Image::Pixel value, valueAtMat;
+		T valueAtKernel;
+		signed int rowOffset, colOffset, currMatRowIdx, currMatColIdx;
+	
+		for (unsigned int matRowIdx = 0; matRowIdx < mat.nRows; ++matRowIdx) {
+			for (unsigned int matColIdx = 0; matColIdx < mat.nCols; ++matColIdx) {
+				// loop through the kernel now
+				Image::Pixel firstPixel = mat.data.at(0);
+				value = Image::createPixel(firstPixel.nChannels);
+				valueAtMat = Image::createPixel(firstPixel.nChannels);
+
+				for (unsigned int kernelRowIdx = 0; kernelRowIdx < kernelMat.nRows; ++kernelRowIdx) {
+					for (unsigned int kernelColIdx = 0; kernelColIdx < kernelMat.nCols; ++kernelColIdx) {
+						rowOffset = (-1 * int((kernelMat.nRows + 1) / 2)) + 1;
+						colOffset = (-1 * int((kernelMat.nCols + 1) / 2)) + 1;
+						valueAtKernel = kernelMat.data[kernelRowIdx * kernelMat.nRows + kernelColIdx];
+						currMatRowIdx = matRowIdx + kernelRowIdx + rowOffset;
+						currMatColIdx = matColIdx + kernelColIdx + colOffset;
+						if ( 
+							(currMatRowIdx >= 0) && (currMatColIdx >= 0) &&
+							(currMatRowIdx < mat.nRows) && (currMatColIdx < mat.nCols)
+						) {
+							// proceed only if row/col indices are valid(+ve) and within range
+							Image::copyPixels(mat.data[(currMatRowIdx * mat.nRows) + currMatColIdx], valueAtMat);
+							value = value + (valueAtMat * valueAtKernel);
 						}
 					}
 				}

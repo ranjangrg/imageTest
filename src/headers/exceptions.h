@@ -35,6 +35,12 @@ namespace Matrix {
 		}
 	};
 
+	struct noDataException : public std::exception {
+		const char * what() const throw() {
+			return "\n[ERR] [Matrix] No data within matrix!";
+		}
+	};
+
 	// TODO: maybe have this nested with dimensionsNotSameException()
 	struct addException : public std::exception {
 		const char * what() const throw() {

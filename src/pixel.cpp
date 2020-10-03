@@ -1,11 +1,13 @@
 #include "./headers/image/pixel.h"
 
 namespace Image {
-	Pixel createPixel(const unsigned int& defaultValue) {
+	Pixel createPixel(const unsigned int& nChannels) {
 		Pixel newPixel;
-		newPixel.nChannels = 1;
-		newPixel.channels = new unsigned char[newPixel.nChannels];
-		newPixel.channels[0] = defaultValue;
+		newPixel.nChannels = nChannels;
+		newPixel.channels = new unsigned char[nChannels];
+		for (unsigned int channelIdx = 0; channelIdx < nChannels; ++channelIdx) {
+			newPixel.channels[channelIdx] = 0; // note: taking 0 as default value; may cause problems with other data types
+		}
 		return newPixel;
 	}
 
@@ -30,6 +32,15 @@ namespace Image {
 			infoMsg += std::to_string((int)(pixel.channels[idx])) + ", ";
 		}
 		Logger::logInfo("Pixel", infoMsg);
+	}
+
+	unsigned int getChannelCount(const Pixel& pixel) {
+		return pixel.nChannels;
+	}
+
+	void copyPixels(const Pixel& sourcePx, Pixel& targetPx) {
+		targetPx.nChannels = sourcePx.nChannels;
+		targetPx.channels = sourcePx.channels;
 	}
 
 	Pixel addPixels(const Pixel& lhs, const Pixel& rhs) {
@@ -68,6 +79,37 @@ namespace Image {
 		}
 		return diffPx;
 	}
+
+	Pixel multiplyPixels(const Pixel& lhs, const Pixel& rhs) {
+		unsigned int nChannelsLhs = lhs.nChannels;
+		unsigned int nChannelsRhs = rhs.nChannels;
+		if (nChannelsLhs != nChannelsRhs) {
+			throw pixelChannelCountNotSameException();
+		}
+		Pixel prodPx;
+		prodPx.nChannels = nChannelsLhs;
+		prodPx.channels = new unsigned char[prodPx.nChannels];
+		for (unsigned int channelIdx = 0; channelIdx < prodPx.nChannels; ++channelIdx) {
+			// check for overflow between unsigned char/ints
+			unsigned short product = lhs.channels[channelIdx] * rhs.channels[channelIdx];
+			prodPx.channels[channelIdx] = product % int(std::numeric_limits<u_char>::max());
+		}
+		return prodPx;
+	}
+
+	template <typename T>
+	Pixel multiplyPixelsWithScalar(const Pixel& lhs, const T& scalarK) {
+		unsigned int nChannelsLhs = lhs.nChannels;
+		Pixel prodPx;
+		prodPx.nChannels = nChannelsLhs;
+		prodPx.channels = new unsigned char[prodPx.nChannels];
+		for (unsigned int channelIdx = 0; channelIdx < prodPx.nChannels; ++channelIdx) {
+			// check for overflow between unsigned char/ints
+			unsigned short product = lhs.channels[channelIdx] * scalarK;
+			prodPx.channels[channelIdx] = product % int(std::numeric_limits<u_char>::max());
+		}
+		return prodPx;
+	}
 }
 
 namespace Image {
@@ -82,6 +124,18 @@ namespace Image {
 		Pixel diffPx = subtractPixels(lhs, rhs);
 		Pixel& diffPxRef = diffPx;
 		return diffPxRef;
+	}
+
+	Pixel& operator * (const Pixel& lhs, const Pixel& rhs) {
+		Pixel prodPx = multiplyPixels(lhs, rhs);
+		Pixel& prodPxRef = prodPx;
+		return prodPxRef;
+	}
+
+	Pixel& operator * (const Pixel& lhs, const signed int& scalarK) {
+		Pixel prodPx = multiplyPixelsWithScalar<signed int>(lhs, scalarK);
+		Pixel& prodPxRef = prodPx;
+		return prodPxRef;
 	}
 
 	std::ostream& operator << (std::ostream& os, const Pixel& px) {

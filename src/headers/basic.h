@@ -7,6 +7,7 @@
 #include <iomanip>	// for std::cout and format
 #include <unordered_map>
 #include <limits> 	// for datastructures maxsizes
+#include <type_traits> 	// to compare typedef structs
 
 // custom header files
 #include "./logger.h"	// for custom logging methods

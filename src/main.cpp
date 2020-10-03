@@ -222,8 +222,8 @@ int matrixConvolutionTest() {
  		{40, 20, 40, 35, 25}
 	});
 
-	Matrix::Matrix<unsigned int> convolutedImageMatrix = Matrix::_convulateUsingMatrix(imageMatrix, convMatrix);
-	
+	Matrix::Matrix<unsigned int> convolutedImageMatrix = Matrix::_convoluteUsingMatrix(imageMatrix, convMatrix);
+
 	// dumping matrices
 	imageMatrix.info();
 	convMatrix.info();
@@ -235,6 +235,28 @@ int matrixConvolutionTest() {
 	testResultMessage += (convTestSuccessful) ? "successful." : "failed!";
 	Logger::logInfo("TEST", testResultMessage);
 
+	// TESTING convoluting Pixel matrix 
+	Image::Pixel dot1 = Image::createPixel( {2,7,0} );
+	Image::Pixel dot2 = Image::createPixel( {5,10,9} );
+	Image::Pixel dot3 = Image::createPixel( {1,0,7} );
+	Image::Pixel dot4 = Image::createPixel( {5,3,0} );
+	Image::Pixel dot5 = Image::createPixel( {7,7,4} );
+	Image::Pixel dot6 = Image::createPixel( {9,3,0} );
+	Image::Pixel dot7 = Image::createPixel( {1,0,7} );
+	Image::Pixel dot8 = Image::createPixel( {8,0,7} );
+	Image::Pixel dot9 = Image::createPixel( {6,0,4} );
+
+	Matrix::Matrix<Image::Pixel> pxMatrix({
+		{dot1, dot2, dot3},
+		{dot4, dot5, dot6},
+		{dot7, dot8, dot9}
+	});
+	Matrix::Matrix<Image::Pixel> convolutedPixelMatrix = Matrix::_convoluteUsingMatrix(pxMatrix, convMatrix);
+	Logger::logInfo("pxMatrix", "");
+	pxMatrix.info();
+	Logger::logInfo("convolutedPixelMatrix", "");
+	convolutedPixelMatrix.info();
+
 	testEnd(testName);
 	return 0;
 }
@@ -242,11 +264,11 @@ int matrixConvolutionTest() {
 int main() {
 	std::unordered_map<std::string, bool> performTests = {
 		{"imageTest", false},
-		{"pixelTest", true},
+		{"pixelTest", false},
 		{"imageAsPixelsTest", false},
 		{"matrixTest", false},
 		{"loggerTest", false},
-		{"matrixConvolutionTest", false}
+		{"matrixConvolutionTest", true}
 	};
 
 	if (performTests["imageTest"]) {imageTest();}
