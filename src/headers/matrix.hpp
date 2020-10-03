@@ -16,7 +16,8 @@ namespace Matrix {
 		unsigned int nRows, nCols;
 		std::vector<T> data;
 
-		Matrix(int nRows, int nCols, const T& _default = 0);
+		Matrix(int nRows, int nCols);
+		Matrix(int nRows, int nCols, const T& _defaultValue);
 		Matrix(std::initializer_list<std::initializer_list<T>> rowCol);	// e.g. Matrix<int> ({{1,2}, {3,4}})
 		Matrix(std::initializer_list<T> rowOnly); 
 		//~Matrix();
@@ -27,6 +28,8 @@ namespace Matrix {
 		bool addRow(std::initializer_list<T> row);
 		void edit(unsigned rowIdx, unsigned colIdx, const T& value);
 		void info(int cellWidth = 3) const;	// cellWidth = 3 is good enough for signed ints between -999 to 999
+
+		void clear();	// clear the vector data
 
 		// 
 		const unsigned int* getDims() const;
@@ -88,13 +91,21 @@ namespace Matrix {
 	===============================================
 	*/
 	template <typename T>
-	Matrix<T>::Matrix(int nRows, int nCols, const T& _default) {
+	Matrix<T>::Matrix(int nRows, int nCols) {
+		this->data.clear();
+		this->data.reserve(nRows * nCols);
+		this->nRows = nRows;
+		this->nCols = nCols;
+	}
+
+	template <typename T>
+	Matrix<T>::Matrix(int nRows, int nCols, const T& _defaultValue) {
 		this->data.clear();
 		this->data.reserve(nRows * nCols);
 		this->nRows = nRows;
 		this->nCols = nCols;
 		for (int idx = 0; idx < (nRows * nCols); ++idx) {
-			this->data.push_back(_default);
+			this->data.push_back(_defaultValue);
 		}
 	}
 
@@ -207,6 +218,11 @@ namespace Matrix {
 			}
 			std::cout << std::string( (cellWidth + 1) * this->nCols, '-') << '-' << std::endl; // only for printing lines
 		}
+	}
+
+	template <typename T>
+	void Matrix<T>::clear() {
+		this->data.clear();
 	}
 
 	template <typename T>

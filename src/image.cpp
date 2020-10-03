@@ -2,15 +2,15 @@
 
 namespace Image {
 	ImageStruct getImageData(const char* fileName) {
-		int width, height, channels;
-		unsigned char *imgData = stbi_load(fileName, &width, &height, &channels, 0);
+		int width, height, nChannels;
+		unsigned char *imgData = stbi_load(fileName, &width, &height, &nChannels, 0);
 		if (imgData == NULL) {
 			std::string errMsg = "Error loading image: " + std::string(fileName);
 			Logger::logError("Image", errMsg);
 		} else {
 			std::string infoMsg = "Loaded file: '" + std::string(fileName) + "'; ";
 			infoMsg +=  "Dimensions: (" + std::to_string(width) + ", " + std::to_string(height) + "); ";
-			infoMsg +=  "Channels: " + std::to_string(channels);
+			infoMsg +=  "Channels: " + std::to_string(nChannels);
 			Logger::logInfo("Image", infoMsg);
 		}
 
@@ -18,7 +18,7 @@ namespace Image {
 		ImageStruct imageObj;	
 		imageObj.width = width;
 		imageObj.height = height;
-		imageObj.channels = channels;
+		imageObj.nChannels = nChannels;
 		imageObj.imgData = imgData;
 
 		return imageObj;
@@ -28,9 +28,9 @@ namespace Image {
 		// Writing to image file ;;; "./data/tmp2.png"
 		int writeSuccessful = stbi_write_png(
 			fileToWrite, 
-			imageObj.width, imageObj.height, imageObj.channels, 
+			imageObj.width, imageObj.height, imageObj.nChannels, 
 			imageObj.imgData, 
-			imageObj.width * imageObj.channels);
+			imageObj.width * imageObj.nChannels);
 		if (writeSuccessful == 1) {
 			std::string infoMsg = "Write Successful. File: " + std::string(fileToWrite);
 			Logger::logInfo("Image", infoMsg);
@@ -45,9 +45,9 @@ namespace Image {
 	void printPixels(const ImageStruct& imageObj, const unsigned int targetChannel) {
 		// make sure the channel is valid or else
 		// it will dump garbage data
-		bool channelIsValid = targetChannel < imageObj.channels;
+		bool channelIsValid = targetChannel < imageObj.nChannels;
 		if (channelIsValid) {
-			unsigned bytePerPixel = imageObj.channels;
+			unsigned bytePerPixel = imageObj.nChannels;
 			for (int pixelY = 0; pixelY < imageObj.width; ++pixelY) {
 				for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
 					unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
@@ -67,7 +67,7 @@ namespace Image {
 		int rgbIdx = 0;	// for red
 		if (colour == 'g') { rgbIdx = 1; } 
 		if (colour == 'b') { rgbIdx = 2; }
-		unsigned bytePerPixel = imageObj.channels;
+		unsigned bytePerPixel = imageObj.nChannels;
 		for (int pixelY = 0; pixelY < imageObj.width; ++pixelY) {
 			for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
 				unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
@@ -95,15 +95,19 @@ namespace Image {
 	//	=============================
 
 	void ImageAsPixels::_initWithImageStruct(const ImageStruct& imageObj) {
-		unsigned bytePerPixel = imageObj.channels;
+		unsigned bytePerPixel = imageObj.nChannels;
 		this->width = imageObj.width;
 		this->height = imageObj.height;
-		this->channels = imageObj.channels;
-		for (int pixelY = 0; pixelY < imageObj.width; ++pixelY) {
-			for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
-				unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
-				Pixel px = createPixel(pixelOffset, imageObj.channels);
-				this->pixels.push_back(px);
+		this->nChannels = imageObj.nChannels;
+		
+		Pixel px = createPixel();
+		Matrix::Matrix<Pixel>* pixelList = new Matrix::Matrix<Pixel>(this->height, this->width, px);
+		this->pixels = pixelList;
+		for (unsigned int rowIdx = 0; rowIdx < imageObj.height; ++rowIdx) {
+			for (int colIdx = 0; colIdx < imageObj.width; ++colIdx) {
+				unsigned char* pixelOffset = imageObj.imgData + (colIdx + imageObj.height*rowIdx) * bytePerPixel;
+				Pixel px = createPixel(pixelOffset, imageObj.nChannels);
+				this->pixels->data[colIdx + imageObj.height*rowIdx] = px;
 			}
 		}
 	}
@@ -111,8 +115,8 @@ namespace Image {
 	ImageAsPixels::ImageAsPixels(void) {
 		this->width = 0;
 		this->height = 0;
-		this->channels = 0;
-		this->pixels.clear();
+		this->nChannels = 0;
+		this->pixels->clear();
 	}
 
 	ImageAsPixels::ImageAsPixels(const ImageStruct& imageObj) {
@@ -125,16 +129,16 @@ namespace Image {
 	}
 
 	void ImageAsPixels::info(void) {
-		for (auto px : this->pixels) {
+		for (auto px : this->pixels->data) {
 			dumpPixelInfo(px);
 		}
 	}
 
 	void ImageAsPixels::info(const unsigned int& targetChannel, const int& cellWidth) {
-		bool channelIsValid = this->channels > targetChannel;
+		bool channelIsValid = this->nChannels > targetChannel;
 		if (channelIsValid) {
 			unsigned long int pixelCount = 0;
-			for (auto px : this->pixels) {
+			for (auto px : this->pixels->data) {
 				// cellWidth ONLY for string format
 				std::cout << std::setw(cellWidth) << (int)(px.channels[targetChannel]) << ' ';
 				if ( ( (++pixelCount) % this->width) == 0 ) {

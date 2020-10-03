@@ -56,7 +56,7 @@ int matrixTest() {
 	std::string testName = "matrixTest()";
 	testStart(testName);
 	// Matrix initialization
-	Matrix::Matrix<int> mA(5, 5);
+	Matrix::Matrix<int> mA(5, 5, 0);
 	Matrix::Matrix<int> mB({
 		{1, 2, 9},
 		{3, 4, 1},
@@ -141,8 +141,16 @@ int pixelTest() {
 	std::string testName = "pixelTest()";
 	testStart(testName);
 
-	Image::Pixel dot = Image::createPixel( {20,40,0,4} );
-	Image::dumpPixelInfo(dot);
+	Image::Pixel dot1 = Image::createPixel( {20,40,0,4} );
+	Image::Pixel dot2 = Image::createPixel( {10,0,50,3} );
+
+	Image::Pixel dotSum1 = dot1 + dot2;
+	Image::Pixel dotDiff1 = dot1 - dot2;
+
+	// testing Pixel dump methods and operators
+	Image::dumpPixelInfo(dot1);
+	Image::dumpPixelInfo(dot2);
+	std::cout << dotSum1 << dotDiff1;
 	
 	testEnd(testName);
 	return 0;
@@ -233,10 +241,10 @@ int main() {
 	std::unordered_map<std::string, bool> performTests = {
 		{"imageTest", false},
 		{"pixelTest", false},
-		{"imageAsPixelsTest", false},
+		{"imageAsPixelsTest", true},
 		{"matrixTest", false},
 		{"loggerTest", false},
-		{"matrixConvolutionTest", true}
+		{"matrixConvolutionTest", false}
 	};
 
 	if (performTests["imageTest"]) {imageTest();}

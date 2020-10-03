@@ -6,6 +6,7 @@
 #include "../basic.h"
 #include "./stb.h"
 #include "./pixel.h"
+#include "../matrix.hpp"
 
 #include <cinttypes>	// for 32 bit integers
 
@@ -14,7 +15,7 @@
 namespace Image {
 	// a struct that holds image data including number of channels and actual pixel data per channel
 	typedef struct image {
-		int width, height, channels;
+		int width, height, nChannels;
 		unsigned char *imgData;
 		//char header[2] {'B', 'M'};	// C++11 allows assignment like this
 	} ImageStruct;
@@ -35,8 +36,8 @@ namespace Image {
 	//	=============================
 	class ImageAsPixels {
 		private:
-			int width, height, channels;
-			std::vector<Pixel> pixels;
+			int width, height, nChannels;
+			Matrix::Matrix<Pixel>* pixels;	// storing pixels through a MATRIX pointer
 			// internal methods
 			void _initWithImageStruct(const ImageStruct& imageObj); // used by some constructors
 		public:
