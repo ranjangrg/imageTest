@@ -219,7 +219,8 @@ int matrixConvolutionTest() {
 	convolutedImageMatrix.info();
 	predictedMatrix.info();
 
-	bool areSame = Matrix::_areSame(convolutedImageMatrix, predictedMatrix);
+	//bool areSame = Matrix::_areSame(convolutedImageMatrix, predictedMatrix);
+	bool areSame = convolutedImageMatrix == predictedMatrix;
 	if (areSame) {
 		std::cout << "They are same" << std::endl;
 	} else {

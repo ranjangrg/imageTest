@@ -47,6 +47,10 @@ namespace Matrix {
 		const Matrix<float>& operator * (const float& scalarFactor) const;
 		Matrix<double>& operator * (const double& scalarFactor);
 		const Matrix<double>& operator * (const double& scalarFactor) const;
+
+		// logical operators
+		bool& operator == (const Matrix<T>& rhs);
+		const bool& operator == (const Matrix<T>& rhs) const;
 	};
 }
 
@@ -251,6 +255,14 @@ namespace Matrix {
 		const Matrix<T>& lhs = *this;
 		Matrix<double>& productMatrix = _multiplyMatrixWithScalar(lhs, scalarFactor);
 		return productMatrix;
+	}
+
+	template <typename T>
+	bool& Matrix<T>::operator == (const Matrix<T>& rhs) {
+		const Matrix<T>& lhs = *this;
+		bool areSame = _areSame(lhs, rhs);
+		bool& areSameRef = areSame;
+		return areSameRef;
 	}
 
 }
