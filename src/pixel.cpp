@@ -36,22 +36,24 @@ namespace Image {
 		unsigned int nChannelsLhs = lhs.nChannels;
 		unsigned int nChannelsRhs = rhs.nChannels;
 		if (nChannelsLhs != nChannelsRhs) {
-			throw channelCountNotSameException();
+			throw pixelChannelCountNotSameException();
 		}
 		Pixel sumPx;
 		sumPx.nChannels = nChannelsLhs;
 		sumPx.channels = new unsigned char[sumPx.nChannels];
 		for (unsigned int channelIdx = 0; channelIdx < sumPx.nChannels; ++channelIdx) {
-			sumPx.channels[channelIdx] = lhs.channels[channelIdx] + rhs.channels[channelIdx];
+			unsigned short sum = lhs.channels[channelIdx] + rhs.channels[channelIdx];
+			sumPx.channels[channelIdx] = sum % int(std::numeric_limits<u_char>::max());
 		}
 		return sumPx;
 	}
 
+	// lot of repeated codes as in addPixels(); due to unsigned overflow with subtraction
 	Pixel subtractPixels(const Pixel& lhs, const Pixel& rhs) {
 		unsigned int nChannelsLhs = lhs.nChannels;
 		unsigned int nChannelsRhs = rhs.nChannels;
 		if (nChannelsLhs != nChannelsRhs) {
-			throw channelCountNotSameException();
+			throw pixelChannelCountNotSameException();
 		}
 		Pixel diffPx;
 		diffPx.nChannels = nChannelsLhs;

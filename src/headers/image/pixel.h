@@ -19,6 +19,11 @@ namespace Image {
 
 	void dumpPixelInfo(const Pixel& pixel);
 
+	// note: unsigned char and overflow using add or subtract
+	// to make sense of overflow(s), add pixel maxes pixel value
+	// at 255 (if sum exceeds 255) AND subtract pixel mins pixel value
+	// at 0 (if diff is -1)
+	// modulus oper is used: %
 	Pixel addPixels(const Pixel& lhs, const Pixel& rhs);
 	Pixel subtractPixels(const Pixel& lhs, const Pixel& rhs);
 }

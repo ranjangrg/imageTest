@@ -44,11 +44,11 @@ namespace Matrix {
 }
 
 namespace Image {
-		struct channelCountNotSameException : public std::exception {
-			const char * what() const throw() {
-				return "\n[ERR] [Pixel] Pixels don't have same number of channels. Operation failed.";
-			}
-		};
+	struct pixelChannelCountNotSameException : public std::exception {
+		const char * what() const throw() {
+			return "\n[ERR] [Pixel] Pixels don't have same number of channels. Operation failed.";
+		}
+	};
 }
 
 #endif

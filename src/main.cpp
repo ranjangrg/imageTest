@@ -141,8 +141,8 @@ int pixelTest() {
 	std::string testName = "pixelTest()";
 	testStart(testName);
 
-	Image::Pixel dot1 = Image::createPixel( {20,40,0,4} );
-	Image::Pixel dot2 = Image::createPixel( {10,0,50,3} );
+	Image::Pixel dot1 = Image::createPixel( {250,40,0,4} );
+	Image::Pixel dot2 = Image::createPixel( {100,0,50,3} );
 
 	Image::Pixel dotSum1 = dot1 + dot2;
 	Image::Pixel dotDiff1 = dot1 - dot2;
@@ -150,7 +150,9 @@ int pixelTest() {
 	// testing Pixel dump methods and operators
 	Image::dumpPixelInfo(dot1);
 	Image::dumpPixelInfo(dot2);
-	std::cout << dotSum1 << dotDiff1;
+	Image::dumpPixelInfo(dotSum1);
+	Image::dumpPixelInfo(dotDiff1);
+	std::cout << dotSum1 << dotDiff1 << std::endl;
 	
 	testEnd(testName);
 	return 0;
@@ -240,8 +242,8 @@ int matrixConvolutionTest() {
 int main() {
 	std::unordered_map<std::string, bool> performTests = {
 		{"imageTest", false},
-		{"pixelTest", false},
-		{"imageAsPixelsTest", true},
+		{"pixelTest", true},
+		{"imageAsPixelsTest", false},
 		{"matrixTest", false},
 		{"loggerTest", false},
 		{"matrixConvolutionTest", false}
