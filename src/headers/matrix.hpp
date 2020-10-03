@@ -51,6 +51,8 @@ namespace Matrix {
 		// logical operators
 		bool& operator == (const Matrix<T>& rhs);
 		const bool& operator == (const Matrix<T>& rhs) const;
+		bool& operator != (const Matrix<T>& rhs);
+		const bool& operator != (const Matrix<T>& rhs) const;
 	};
 }
 
@@ -263,6 +265,14 @@ namespace Matrix {
 		bool areSame = _areSame(lhs, rhs);
 		bool& areSameRef = areSame;
 		return areSameRef;
+	}
+
+	template <typename T>
+	bool& Matrix<T>::operator != (const Matrix<T>& rhs) {
+		const Matrix<T>& lhs = *this;
+		bool areNotSame = !_areSame(lhs, rhs);
+		bool& areNotSameRef = areNotSame;
+		return areNotSameRef;
 	}
 
 }
