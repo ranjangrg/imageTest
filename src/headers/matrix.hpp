@@ -68,9 +68,11 @@ namespace Matrix {
 	template <typename T, typename U>
 	Matrix<U>& _multiplyMatrixWithScalar(const Matrix<T>& mat, const U& scalarFactor);
 
-	// TODO: convulate a matrix using another matrix
 	template <typename T>
 	Matrix<T>& _convulateUsingMatrix(const Matrix<T>& mat, const Matrix<T>& kernelMat);
+
+	template <typename T, typename U>
+	bool _areSame(const Matrix<T>& lhs, const Matrix<U>& rhs);
 }
 
 namespace Matrix {
@@ -319,7 +321,7 @@ namespace Matrix {
 		return *productMatrix;
 	}
 
-	// TODO: convulate a matrix using another matrix
+	// convulate a matrix using another matrix
 	template <typename T>
 	Matrix<T>& _convulateUsingMatrix(const Matrix<T>& mat, const Matrix<T>& kernelMat) {
 		Matrix<T>* resultantMatrix = new Matrix<T>(mat.nRows, mat.nCols);
@@ -352,6 +354,18 @@ namespace Matrix {
 			}
 		}
 		return *resultantMatrix;
+	}
+
+	template <typename T, typename U>
+	bool _areSame(const Matrix<T>& lhs, const Matrix<U>& rhs) {
+		bool areSame = true;
+		bool haveSameDims = _compareDims(lhs, rhs);
+		if (haveSameDims) {
+			for (unsigned int idx = 0; (idx < lhs.data.size()) && areSame; ++idx) {
+				areSame = lhs.data[idx] == rhs.data[idx];
+			}
+		}
+		return areSame;
 	}
 
 }

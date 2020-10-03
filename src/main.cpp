@@ -203,12 +203,28 @@ int matrixConvolutionTest() {
 		{5, 5, 0}
 	});
 
+	Matrix::Matrix<unsigned int> predictedMatrix({
+		{60, 45, 60, 60, 45},
+ 		{15, 65, 35, 65, 40},
+ 		{55, 35, 65, 35, 40},
+ 		{35, 90, 35, 65, 60},
+ 		{40, 20, 40, 35, 25}
+	});
+
 	Matrix::Matrix<unsigned int> convolutedImageMatrix = Matrix::_convulateUsingMatrix(imageMatrix, convMatrix);
 	
 	// dumping matrices
 	imageMatrix.info();
 	convMatrix.info();
 	convolutedImageMatrix.info();
+	predictedMatrix.info();
+
+	bool areSame = Matrix::_areSame(convolutedImageMatrix, predictedMatrix);
+	if (areSame) {
+		std::cout << "They are same" << std::endl;
+	} else {
+		std::cout << "They are NOT same" << std::endl;
+	}
 
 	/*
 	// correct convoluted matrix
