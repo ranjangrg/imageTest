@@ -87,6 +87,9 @@ namespace Matrix {
 
 	template <typename T, typename U>
 	bool _areSame(const Matrix<T>& lhs, const Matrix<U>& rhs);
+
+	template <typename T>
+	T* _pixelMatrixToPointers(Matrix<Image::Pixel>* pixelMatrix);
 }
 
 namespace Matrix {
@@ -417,18 +420,26 @@ namespace Matrix {
 	template <typename T>
 	Matrix<Image::Pixel>& _convoluteUsingMatrix(const Matrix<Image::Pixel>& mat, const Matrix<T>& kernelMat) {
 		Matrix<Image::Pixel>* resultantMatrix = new Matrix<Image::Pixel>(mat.nRows, mat.nCols);
-		// variable declarations
-		Image::Pixel value, valueAtMat;
+		// variable declarations:
+		// Pixel have unsigned data SO we need a signed datatype to perform arithmetic operations
+		typedef typename std::make_signed<T>::type signed_T;	// new type i.e. unsigned version of T
+		signed_T* value;	// these are arrays containing SIGNED T; used to store channel values
+		signed_T* valueAtMat;		
 		T valueAtKernel;
 		signed int rowOffset, colOffset, currMatRowIdx, currMatColIdx;
+		unsigned int nChannels;
 	
 		for (unsigned int matRowIdx = 0; matRowIdx < mat.nRows; ++matRowIdx) {
 			for (unsigned int matColIdx = 0; matColIdx < mat.nCols; ++matColIdx) {
-				// loop through the kernel now
 				Image::Pixel firstPixel = mat.data.at(0);
-				value = Image::createPixel(firstPixel.nChannels);
-				valueAtMat = Image::createPixel(firstPixel.nChannels);
+				nChannels = firstPixel.nChannels;
+				value = new signed_T[nChannels];
+				valueAtMat = new signed_T[nChannels];
 
+				// this 'newPixel' will be stored in our final matrix
+				Image::Pixel newPixel = Image::createPixel(firstPixel.nChannels);
+
+				// loop through the kernel now
 				for (unsigned int kernelRowIdx = 0; kernelRowIdx < kernelMat.nRows; ++kernelRowIdx) {
 					for (unsigned int kernelColIdx = 0; kernelColIdx < kernelMat.nCols; ++kernelColIdx) {
 						rowOffset = (-1 * int((kernelMat.nRows + 1) / 2)) + 1;
@@ -441,12 +452,22 @@ namespace Matrix {
 							(currMatRowIdx < mat.nRows) && (currMatColIdx < mat.nCols)
 						) {
 							// proceed only if row/col indices are valid(+ve) and within range
-							Image::copyPixels(mat.data[(currMatRowIdx * mat.nRows) + currMatColIdx], valueAtMat);
-							value = value + (valueAtMat * valueAtKernel);
+							//Image::copyPixels(mat.data[(currMatRowIdx * mat.nRows) + currMatColIdx], valueAtMat);
+							//value = value + (valueAtMat * valueAtKernel);
+
+							// TESTING handle pixel arithmetic operations individually by channels
+							for (unsigned int channelIdx = 0; channelIdx < nChannels; ++channelIdx) {
+								valueAtMat[channelIdx] = mat.data[(currMatRowIdx * mat.nRows) + currMatColIdx].channels[channelIdx];
+								value[channelIdx] = value[channelIdx] + (valueAtMat[channelIdx] * valueAtKernel);
+							}
 						}
 					}
 				}
-				resultantMatrix->edit(matRowIdx, matColIdx, value) ;
+				// populate newPixel with value[..] corresponding to proper channels
+				for (unsigned int channelIdx = 0; channelIdx < nChannels; ++channelIdx) {
+					newPixel.channels[channelIdx] = value[channelIdx];
+				}
+				resultantMatrix->edit(matRowIdx, matColIdx, newPixel) ;
 			}
 		}
 		return *resultantMatrix;
@@ -462,6 +483,32 @@ namespace Matrix {
 			}
 		}
 		return areSame;
+	}
+
+	template <typename T>
+	T* _pixelMatrixToPointers(Matrix<Image::Pixel>* pixelMatrix) {
+		T* imageData;
+		if (pixelMatrix->data.size() > 0) {
+			unsigned int nChannels = pixelMatrix->data.at(0).nChannels;	// read from first pixel (if any??)
+			unsigned long int arraySize = pixelMatrix->data.size() * nChannels;
+			imageData = new T[arraySize];
+			unsigned long int writeIdx;
+			for (unsigned int pixelIdx = 0; pixelIdx < pixelMatrix->data.size(); ++pixelIdx) {
+				const Image::Pixel& currentPixel = pixelMatrix->data[pixelIdx]; // don't know how runtime is afffected by creating this pixel ref 
+				for (unsigned int channelIdx = 0; channelIdx < currentPixel.nChannels; ++channelIdx) {
+					writeIdx = (pixelIdx * nChannels) + channelIdx;
+					imageData[writeIdx] = currentPixel.channels[channelIdx];
+				}
+			}
+
+			// uncomment to dump array
+			/*
+			for (unsigned long int idx = 0; idx < arraySize; ++idx) {
+				std::cout << "Value at " << idx << ": " << int(imageData[idx]) << std::endl;
+			}
+			*/
+		}
+		return imageData;
 	}
 
 }

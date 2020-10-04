@@ -37,15 +37,22 @@ namespace Image {
 	// 	 ImageAsPixels class methods
 	//	=============================
 	class ImageAsPixels {
-		private:
+		public:
 			int width, height, nChannels;
 			Matrix::Matrix<Pixel>* pixels;	// storing pixels through a MATRIX pointer
 			// internal methods
 			void _initWithImageStruct(const ImageStruct& imageObj); // used by some constructors
-		public:
+		
 			ImageAsPixels(void);
 			ImageAsPixels(const ImageStruct& imageObj);	// use an imageStruct (struct/obj?) as constructor param
 			ImageAsPixels(const char* fileName);
+
+			// CRUD
+			Matrix::Matrix<Pixel>* getPixels();	// returns this->pixels
+			// returns an ImageStruct obj ref populated using all ImageAsPixels class members
+			// note ONLY properties like height, width and nChannels are set in ImageStruct
+			// ImageStruct.imgData is NOT SET
+			ImageStruct& getImageStructPropertiesOnly(); 
 
 			// displays all pixel data i.e. calls dumpPixelInfo() with each pixel
 			void info(void);

@@ -128,6 +128,20 @@ namespace Image {
 		this->_initWithImageStruct(imageObj);
 	}
 
+	Matrix::Matrix<Pixel>* ImageAsPixels::getPixels() {	// returns this->pixels
+		return this->pixels;
+	}
+
+	ImageStruct& ImageAsPixels::getImageStructPropertiesOnly() {
+		ImageStruct imgSt;
+		imgSt.height = this->height;
+		imgSt.width = this->width;
+		imgSt.nChannels = this->nChannels;
+		imgSt.imgData = nullptr;
+		ImageStruct& imgStRef = imgSt;
+		return imgStRef;
+	}
+
 	void ImageAsPixels::info(void) {
 		for (auto px : this->pixels->data) {
 			dumpPixelInfo(px);

@@ -261,6 +261,49 @@ int matrixConvolutionTest() {
 	return 0;
 }
 
+int pixelMatrixToCharTest() {
+	std::string testName = "pixelMatrixToCharTest()";
+	testStart(testName);
+
+	Matrix::Matrix<unsigned int> kernel({
+		{53, 91, 70}, 
+		{25, 20, 59}, 
+		{54, 57, 78}
+	});
+
+	Matrix::Matrix<Image::Pixel>* pxMatrixPtr;
+	//Image::ImageAsPixels imageObj("./data/pixel.png");
+	Image::ImageAsPixels imageObj("./data/test.jpg");
+	pxMatrixPtr = imageObj.getPixels();
+	Matrix::Matrix<Image::Pixel> pxMatrix = *pxMatrixPtr;
+
+	Matrix::Matrix<Image::Pixel> convolutedPixelMatrix = Matrix::_convoluteUsingMatrix(pxMatrix, kernel);
+	
+	/*
+	std::cout << "Before:" << std::endl;
+	pxMatrix.info();
+	std::cout << "After:" << std::endl;
+	convolutedPixelMatrix.info();
+	*/
+
+	/* unsigned to signed type template
+	unsigned int a = 2;
+	std::make_signed<unsigned int>::type b = a-5;
+	std::cout << "a: " << a << ", b: " << b << std::endl;
+	*/
+	
+	unsigned char* imageData = Matrix::_pixelMatrixToPointers<unsigned char>(&convolutedPixelMatrix);
+
+	Image::ImageStruct testImage;
+	testImage = imageObj.getImageStructPropertiesOnly();
+	testImage.imgData = imageData;
+
+	Image::writeImageToFile("./data/delme.png", testImage);
+
+	testEnd(testName);
+	return 0;
+}
+
 int main() {
 	std::unordered_map<std::string, bool> performTests = {
 		{"imageTest", false},
@@ -268,7 +311,8 @@ int main() {
 		{"imageAsPixelsTest", false},
 		{"matrixTest", false},
 		{"loggerTest", false},
-		{"matrixConvolutionTest", true}
+		{"matrixConvolutionTest", false},
+		{"pixelMatrixToCharTest", true}
 	};
 
 	if (performTests["imageTest"]) {imageTest();}
@@ -277,6 +321,7 @@ int main() {
 	if (performTests["matrixTest"]) {matrixTest();}
 	if (performTests["loggerTest"]) {loggerTest();}
 	if (performTests["matrixConvolutionTest"]) {matrixConvolutionTest();}
+	if (performTests["pixelMatrixToCharTest"]) {pixelMatrixToCharTest();}
 	
 	return 0;
 }
