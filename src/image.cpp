@@ -48,9 +48,9 @@ namespace Image {
 		bool channelIsValid = targetChannel < imageObj.nChannels;
 		if (channelIsValid) {
 			unsigned bytePerPixel = imageObj.nChannels;
-			for (int pixelY = 0; pixelY < imageObj.width; ++pixelY) {
-				for (int pixelX = 0; pixelX < imageObj.height; ++pixelX) {
-					unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.height*pixelY) * bytePerPixel;
+			for (int pixelY = 0; pixelY < imageObj.height; ++pixelY) {
+				for (int pixelX = 0; pixelX < imageObj.width; ++pixelX) {
+					unsigned char* pixelOffset = imageObj.imgData + (pixelX + imageObj.width*pixelY) * bytePerPixel;
 					std::cout << std::setw(3) << int(pixelOffset[targetChannel]) << ' ';
 				}
 				std::cout << std::endl;
